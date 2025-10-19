@@ -1,0 +1,257 @@
+"books": [
+    {
+      "title": "Layla",
+      "author": "Colleen Hoover",
+      "publicationYear": 2020,
+      "ISBN": "978-6156372562",
+      "pages": 305
+    },
+    {
+      "title": "Heart Bones",
+      "author": "Colleen Hoover",
+      "publicationYear": 2020,
+      "ISBN": "978-6156372579",
+      "pages": 337
+    },
+    {
+      "title": "Ugly Love",
+      "author": "Colleen Hoover",
+      "publicationYear": 2014,
+      "ISBN": "978-6156372029",
+      "pages": 337
+    },
+    {
+      "title": "Fourth Wing (Negyedik szárny) - Empyrean 1.",
+      "author": "Rebecca Yarros",
+      "publicationYear": 2023,
+      "ISBN": "978-9635921822",
+      "pages": 528
+    },
+    {
+      "title": "A szent Johanna Gimi - Kezdet (1. r.)",
+      "author": "Leiner Laura",
+      "publicationYear": 2011,
+      "ISBN": "978-9630966455",
+      "pages": 312
+    },
+    {
+      "title": "Velünk véget ér (It Ends with Us)",
+      "author": "Colleen Hoover",
+      "publicationYear": 2016,
+      "ISBN": "978-9635920047",
+      "pages": 384
+    },
+    {
+      "title": "Verity",
+      "author": "Colleen Hoover",
+      "publicationYear": 2018,
+      "ISBN": "978-6156372074",
+      "pages": 336
+    },
+    {
+      "title": "Icebreaker (Jégtörő)",
+      "author": "Hannah Grace",
+      "publicationYear": 2022,
+      "ISBN": "978-6156683113",
+      "pages": 416
+    },
+    {
+      "title": "Amin Sosem Leszünk Túl",
+      "author": "Lucy Score",
+      "publicationYear": 2023,
+      "ISBN": "978-9634177243",
+      "pages": 528
+    },
+    {
+      "title": "The Cruel Prince (A kegyetlen herceg)",
+      "author": "Holly Black",
+      "publicationYear": 2018,
+      "ISBN": "978-9633873402",
+      "pages": 370
+    },
+    {
+      "title": "Nyári Nap (A szent Johanna Gimi 8. r.)",
+      "author": "Leiner Laura",
+      "publicationYear": 2018,
+      "ISBN": "978-6155820050",
+      "pages": 256
+    },
+    {
+      "title": "King of Wrath (A Harag Királya) - Twisted 1.",
+      "author": "Ana Huang",
+      "publicationYear": 2023,
+      "ISBN": "978-9635920825",
+      "pages": 400
+    },
+    {
+      "title": "Reminders of Him",
+      "author": "Colleen Hoover",
+      "publicationYear": 2022,
+      "ISBN": "978-6156372067",
+      "pages": 464
+    },
+    {
+      "title": "Never Never",
+      "author": "Colleen Hoover & Tarryn Fisher",
+      "publicationYear": 2020,
+      "ISBN": "978-6156372555",
+      "pages": 320
+    },
+    {
+      "title": "Without Merit",
+      "author": "Colleen Hoover",
+      "publicationYear": 2017,
+      "ISBN": "978-6155820036",
+      "pages": 352
+    },
+    {
+      "title": "Amin Sosem Feledünk Fel",
+      "author": "Lucy Score",
+      "publicationYear": 2024,
+      "ISBN": "978-9634177588",
+      "pages": 544
+    },
+    {
+      "title": "Amit Magunk Mögött Hagyunk",
+      "author": "Lucy Score",
+      "publicationYear": 2022,
+      "ISBN": "978-9634176475",
+      "pages": 576
+    },
+    {
+      "title": "The Wicked King (A gonosz király)",
+      "author": "Holly Black",
+      "publicationYear": 2019,
+      "ISBN": "978-9633874980",
+      "pages": 384
+    },
+    {
+      "title": "The Queen of Nothing (A semmi királynője)",
+      "author": "Holly Black",
+      "publicationYear": 2020,
+      "ISBN": "978-9633875567",
+      "pages": 336
+    },
+    {
+      "title": "Ez Veled",
+      "author": "Leiner Laura",
+      "publicationYear": 2019,
+      "ISBN": "978-6155986022",
+      "pages": 320
+    },
+    {
+      "title": "Emlékezz rám",
+      "author": "Leiner Laura",
+      "publicationYear": 2021,
+      "ISBN": "978-6155986220",
+      "pages": 368
+    },
+    {
+      "title": "Bizz bennem",
+      "author": "Leiner Laura",
+      "publicationYear": 2022,
+      "ISBN": "978-6155986329",
+      "pages": 384
+    },
+    {
+      "title": "Girl in Pieces",
+      "author": "Kathleen Glasgow",
+      "publicationYear": 2023,
+      "ISBN": "978-9635921839",
+      "pages": 416
+    },
+    {
+      "title": "King of Sloth (A Restaság Királya) - Twisted 4.",
+      "author": "Ana Huang",
+      "publicationYear": 2024,
+      "ISBN": "978-9635921617",
+      "pages": 416
+    },
+    {
+      "title": "Knight Lies (Lovagi hazugságok) - Twisted 5.",
+      "author": "Ana Huang",
+      "publicationYear": 2025,
+      "ISBN": "978-9635921891",
+      "pages": 416
+    },
+    {
+      "title": "Iron Flame (Vaskolb) - Empyrean 2.",
+      "author": "Rebecca Yarros",
+      "publicationYear": 2024,
+      "ISBN": "978-9635922706",
+      "pages": 656
+    },
+    {
+      "title": "Haunting Adeline (Adeline kísértése) - Cat and Mouse Duet 1.",
+      "author": "H.D. Carlton",
+      "publicationYear": 2024,
+      "ISBN": "978-6156683526",
+      "pages": 470
+    },
+    {
+      "title": "Hunting Adeline (Adeline vadászata) - Cat and Mouse Duet 2.",
+      "author": "H.D. Carlton",
+      "publicationYear": 2025,
+      "ISBN": "978-6156683533",
+      "pages": 500
+    },
+    {
+      "title": "IOV",
+      "author": "Leiner Laura",
+      "publicationYear": 2021,
+      "ISBN": "978-6155986167",
+      "pages": 384
+    }
+  ],
+"users": [
+    {
+      "username": "Your_Username",
+      "email": "my.email@tracker.hu",
+      "readingList": [
+        {
+          "book": {
+            "title": "A Programozás Művészete",
+            "author": "Donald Knuth",
+            "publicationYear": 1968,
+            "ISBN": "978-0201896831",
+            "pages": 650
+          },
+          "rating": 4,
+          "review": "Alapvető olvasmány, de nehéz.",
+          "startDate": "2024-05-10",
+          "endDate": "2024-06-25",
+          "status": "READ"
+        },
+        {
+          "book": {
+            "title": "OOP Tervezési Minták",
+            "author": "Gamma, Helm, Johnson, Vlissides",
+            "publicationYear": 1994,
+            "ISBN": "978-0201633610",
+            "pages": 416
+          },
+          "rating": 0,
+          "review": " ",
+          "startDate": "2025-01-01",
+          "endDate": null,
+          "status": "IN_PROGRESS"
+        },
+        {
+          "book": {
+            "title": "Layla",
+            "author": "Colleen Hoover",
+            "publicationYear": 2020,
+            "ISBN": "978-6156372562",
+            "pages": 305
+          },
+          "rating": 5,
+          "review": "Nagyon szerettem, gyorsan olvastam.",
+          "startDate": "2024-09-01",
+          "endDate": "2024-09-03",
+          "status": "READ"
+        }
+      ]
+    }
+  ]
+}
+
