@@ -68,8 +68,22 @@ public class ReadingItem {
         }
     }
 
-    public void setStatus(Status status) {
-        this.status=status;
+    public void setStatus(Status newStatus) {
+       if (this.status == newStatus) return;
+
+        if (newStatus == Status.IN_PROGRESS && this.status != Status.IN_PROGRESS) {
+            this.startDate = LocalDate.now();
+            this.endDate = null;
+        } else if (newStatus == Status.READ && this.status != Status.READ) {
+            if (this.startDate == null) {
+                this.startDate = LocalDate.now();
+            }
+            this.endDate = LocalDate.now();
+        } else if (newStatus == Status.WISHLIST) {
+            this.startDate = null;
+            this.endDate = null;
+        }
+        this.status = newStatus;
     }
     
    

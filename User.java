@@ -12,7 +12,7 @@ import java.util.List;
  * @author Andi
  */
 public class User {
-    private String UserName;
+    private String username;
     private String email;
     private List<ReadingItem>readingList; //a User olvasasi bejegyzeseinek listaja
     
@@ -20,18 +20,15 @@ public class User {
         this.readingList=new ArrayList<>();
     }
 
-    public User(String UserName, String email, List<ReadingItem> readingList) {
-        this.UserName = UserName;
+    public User(String MY_USERNAME, String email) {
+        this.username = MY_USERNAME;
         this.email = email;
         this.readingList = new ArrayList<>();
     }
+   
 
-    User(String MY_USERNAME, String myemailtrackerhu) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public String getUserName() {
-        return UserName;
+    public String getusername() {
+        return username;
     }
 
     public String getEmail() {
@@ -52,14 +49,21 @@ public class User {
     }
     
     //listazza az olvasi bejegyzeseit a Usernek
-    public void listReadingItem(){
-        if(readingList.isEmpty()){
-            System.out.println(this.UserName + "the user has no recorded reading yet.");
+    public void listReadingItem(User user){
+        
+        if(user==null){
+        return;
         }
-        System.out.println(this.UserName + "reading list: ");
+        List<ReadingItem> readingList = user.getReadingList();
+        
+        if(readingList.isEmpty()){
+            System.out.println(this.username + "the user has no recorded reading yet.");
+        }
+        System.out.println(this.username + "reading list: ");
         int lineNum=1;
         for(ReadingItem item : readingList){
             System.out.println(lineNum + "." + item.toString());
+            lineNum++;
         }
     }
     
