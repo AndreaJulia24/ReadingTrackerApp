@@ -86,7 +86,7 @@ public class ReadingItem {
         this.status = newStatus;
     }
     
-   
+    
     public void setReview(String review) {
         this.review =review;
     }

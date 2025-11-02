@@ -4,13 +4,13 @@
  */
 package com.mycompany.booktrackerapp;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author Andi
  */
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     private String username;
     private String email;
@@ -25,7 +25,7 @@ public class User {
         this.email = email;
         this.readingList = new ArrayList<>();
     }
-   
+    
 
     public String getusername() {
         return username;
@@ -48,7 +48,7 @@ public class User {
         this.readingList.add(item);
     }
     
-    //listazza az olvasi bejegyzeseit a Usernek
+    //listazza az olvasi bejegyzeseit a Usernek (konzolos verzió, amit a GUI nem használ)
     public void listReadingItem(User user){
         
         if(user==null){
@@ -67,12 +67,13 @@ public class User {
         }
     }
     
-    public void CalcTotalReadPages(){
+    public int CalcTotalReadPages(){
         int totalPage=0;
         for(ReadingItem item : readingList){
-            if(item.status==ReadingItem.Status.READ){
-                totalPage += item.book.getPage();
+            if(item.getStatus()==ReadingItem.Status.READ){
+                totalPage += item.getBook().getPage();
             }
         }
+        return totalPage;
     }
 }
