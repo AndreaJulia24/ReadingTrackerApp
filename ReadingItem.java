@@ -11,7 +11,7 @@ package com.mycompany.booktrackerapp;
 import java.time.LocalDate;
 
 public class ReadingItem {
-    Book book;
+    MediaItem book;
     int rating;
     String review;
     LocalDate startDate;
@@ -26,7 +26,7 @@ public class ReadingItem {
     
     public ReadingItem(){};
 
-    public ReadingItem(Book book, int rating, String review, LocalDate startDate, LocalDate endDate, Status status) {
+    public ReadingItem(MediaItem book, int rating, String review, LocalDate startDate, LocalDate endDate, Status status) {
         this.book = book;
         this.rating = rating;
         this.review =review;
@@ -35,7 +35,7 @@ public class ReadingItem {
         this.status = status;
     }
 
-    public Book getBook() {
+    public MediaItem getBook() {
         return book;
     }
 

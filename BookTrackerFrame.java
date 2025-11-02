@@ -13,10 +13,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.io.FileWriter;
-import java.io.FileReader;
+import java.io.FileWriter; 
+import java.io.FileReader; 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Locale;
 
 import java.util.logging.Level;
 
@@ -27,7 +28,7 @@ import java.util.logging.Level;
 public class BookTrackerFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BookTrackerFrame.class.getName());
-    private List<Book>bookList=new ArrayList<>();
+    private List<MediaItem>bookList=new ArrayList<>();
     private User currentUser;
     /**
      * Creates new form BookTrackerFrame
@@ -43,6 +44,9 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         CombCategory.addItem("Young Adult (HU)");
         CombCategory.addItem("Author: Rebecca Yarros");
         CombCategory.addItem("Author: Colleen Hoover");
+        CombCategory.addItem("Author: Ana Huang");
+        CombCategory.addItem("Dark Romance");
+        CombCategory.addItem("Computer Science");
     }
     
     private void initializeUser(){
@@ -63,9 +67,9 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Logged in as Guest.", "Login Info", JOptionPane.INFORMATION_MESSAGE);
         }
         
-        /*if (currentUser != null) { 
+       if (currentUser != null) { 
             loadDataFromJSON(); 
-        }*/
+        }
     }
     
     /**
@@ -229,8 +233,8 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(CombCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(204, 204, 204)
+                                .addComponent(CombCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(119, 119, 119)
                                 .addComponent(LoadButton))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
@@ -293,9 +297,31 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             String author=JtxtAuthor.getText().trim();
             int publicationYear=Integer.parseInt(jTxtPublication.getText().trim());
             String ISBN=jTxtISBN.getText().trim();
-            int page=Integer.parseInt(jTxtPage.getText().trim());
             
-            Book book=new Book(title,author,publicationYear,ISBN,page);
+            int page=Integer.parseInt(jTxtPage.getText().trim());
+            MediaItem mediaItem;
+            
+            //polimorfikus letrehozas-oroklodes
+            if(page>0){ //ha van oldalszam akkor Book
+              mediaItem=new Book(title,author,publicationYear,ISBN,page);
+            }
+            else{ //ha az oldalszam=0; akkor EBook
+               String sizeStr=JOptionPane.showInputDialog(this, "The page is 0.Add the size of Ebook(MB): ",JOptionPane.PLAIN_MESSAGE);
+               int size=0;
+               if(sizeStr!=null && sizeStr.isEmpty()){
+                   //hibakezeles ha veletlenul a size nem szam
+                   try{
+                       size=Integer.parseInt(sizeStr);
+                   }
+                   catch(NumberFormatException e){
+                       JOptionPane.showMessageDialog(this, "Invalid size.");
+                       size=0; 
+                   }
+               }
+              mediaItem=new EBook(title,author,publicationYear,ISBN,size); 
+            }
+            
+            JOptionPane.showMessageDialog(this, mediaItem.getTitle() + "price: " +mediaItem.calculatePrice() + JOptionPane.INFORMATION_MESSAGE);
             
             //beolvassuk az olvasasi adatokat-rating,status,review
             String statusStr=JOptionPane.showInputDialog(this,"Enter your status(READ,IN_PROGRESS,WISHLIST): ",JOptionPane.PLAIN_MESSAGE);
@@ -320,13 +346,13 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                status = ReadingItem.Status.valueOf(statusStr.replace(" ", "_").toUpperCase());
             }
             
-            ReadingItem item = new ReadingItem(book, rating, (review != null ? review.trim() : ""), null, null, status);
+            ReadingItem item = new ReadingItem(mediaItem, rating, (review != null ? review.trim() : ""), null, null, status);
             
             item.setStatus(status);
             
             currentUser.addReadingItem(item);
             
-            //saveDataInJSON(); 
+            saveDataInJSON(); 
             
             UpdateReadingList();
             
@@ -397,7 +423,9 @@ public class BookTrackerFrame extends javax.swing.JFrame {
              
              if(!publishedDate.isEmpty()){
                 try{
-                    publicationYear=Integer.parseInt(publishedDate);
+                    //AI-t megkerdeztem hogyan tehetem lathatova a publicationYear-t
+                    String yearStr=publishedDate.substring(0,Math.min(publishedDate.length(),4 ));
+                    publicationYear=Integer.parseInt(yearStr);
                 }
                 catch(NumberFormatException e){
                     publicationYear=0;
@@ -408,7 +436,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
              String ISBN= "N/A";
              JSONArray identifiers=volumeInfo.optJSONArray("industryIdentifiers");
              if(identifiers!=null){
-                 for(int j=0;i<identifiers.length();++j){
+                 for(int j=0;j<identifiers.length();++j){
                      JSONObject identifier=identifiers.getJSONObject(j);
                      String type= identifier.optString("type");
                      if(type.equals("ISBN_13")){
@@ -418,8 +446,14 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                  }
              }
              
-             Book book=new Book(title,author,publicationYear,ISBN,page);
-             bookList.add(book);
+             MediaItem mediaItem;
+             if(page>0){
+                 mediaItem=new Book(title,author,publicationYear,ISBN,page);
+             }
+             else{
+                 mediaItem=new EBook(title,author,publicationYear,ISBN,0);
+             }
+             bookList.add(mediaItem);
           }   
         updateOutputTxt();
       }
@@ -430,17 +464,29 @@ public class BookTrackerFrame extends javax.swing.JFrame {
     
     private void updateOutputTxt(){
         StringBuilder sb=new StringBuilder();
-        for(Book book : bookList){
-             sb.append(book.getTitle())
-           .append(" by ").append(book.getAuthor())
-           .append(" (").append(book.getPublicationYear()).append(")")
-           .append(", ISBN: ").append(book.getISBN())
-           .append(", ").append(book.getPage()).append(" pages")
-           .append("\n");
+        for(MediaItem book : bookList){
+            if(book instanceof Book){
+                Book selectedBook=(Book) book;
+                 sb.append(book.getTitle())
+                   .append(" by ").append(selectedBook.getAuthor())
+                   .append(" (").append(selectedBook.getPublicationYear()).append(")")
+                   .append(", ISBN: ").append(selectedBook.getISBN())
+                   .append(", ").append(selectedBook.getPage()).append("pages")
+                   .append("\n");
+            }
+            else if(book instanceof EBook){
+                EBook selectedEBook=(EBook) book;
+                    sb.append("E-Book: ")
+                   .append(book.getTitle())
+                   .append(" by ").append(selectedEBook.getAuthor())
+                   .append(" (").append(selectedEBook.getPublicationYear()).append(")")
+                   .append(", ISBN: ").append(selectedEBook.getISBN())
+                   .append(", Size: ").append(selectedEBook.getFileSizeMB()).append(" MB")
+                   .append("\n");
+            }
         }
         outputTxt.setText(sb.toString());
     }
-    
     
    
     private void jTxtISBNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTxtISBNActionPerformed
@@ -456,6 +502,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
        String selected = (String)CombCategory.getSelectedItem();
        String url="";
        final String GOOGLE_BOOKS_BASE_URL = "https://www.googleapis.com/books/v1/volumes?q=";
+       final int MAX_RESULTS=40;
         
        if (selected == null || selected.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Please select a category!");
@@ -465,28 +512,37 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         if(selected != null)
             switch (selected) {
             case "Fantasy":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:Fantasy&maxResults=40";;
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Fantasy&maxResults=" + MAX_RESULTS;
                 break;
             case "Romance":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:Romance&maxResults=40";
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Romance&maxResults=" + MAX_RESULTS;
                 break;
             case "Thriller":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:Thriller&maxResults=40";
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Thriller&maxResults=" + MAX_RESULTS;
                 break;
             case "Young Adult (EN)":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:\"Young+Adult\"&langRestrict=en&maxResults=40";
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Young+Adult&langRestrict=en&maxResults=" + MAX_RESULTS;
                 break;
             case "Young Adult (HU)":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:\"Young+Adult\"&langRestrict=hu&maxResults=40";
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Young+Adult&langRestrict=hu&maxResults=" + MAX_RESULTS;
                 break;
             case "Author: Rebecca Yarros":
-                 url=GOOGLE_BOOKS_BASE_URL + "inauthor:\"Rebecca+Yarros\"&maxResults=40"; 
+                 url=GOOGLE_BOOKS_BASE_URL + "inauthor:Rebecca+Yarros&maxResults=" + MAX_RESULTS; 
                 break;
             case "Author: Colleen Hoover":
-                url=GOOGLE_BOOKS_BASE_URL + "inauthor:\"Colleen+Hoover\"&maxResults=40";
+                url=GOOGLE_BOOKS_BASE_URL + "inauthor:Colleen+Hoover&maxResults=" + MAX_RESULTS;
+                break;
+            case "Author: Ana Huang":
+                url=GOOGLE_BOOKS_BASE_URL + "inauthor:Ana+Huang&maxResults=" + MAX_RESULTS;
+                break;
+            case "Dark Romance ":
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Dark+Romance&maxResults=" + MAX_RESULTS;
+                break;
+            case "Computer Science ":
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Computer+Science&maxResults=" + MAX_RESULTS;
                 break;
             default:
-                javax.swing.JOptionPane.showMessageDialog(this,"Choose another category.");
+                JOptionPane.showMessageDialog(this,"Choose another category.");
                 break;
         }
         
@@ -497,10 +553,6 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Error loading books.");
         }
     }//GEN-LAST:event_LoadButtonActionPerformed
-
-    private void CombCategoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CombCategoryActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_CombCategoryActionPerformed
 
     private void selectMyBooksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectMyBooksActionPerformed
         // TODO add your handling code here:
@@ -513,12 +565,13 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             }
 
             // Kereses a bookList-ben a kivalasztott konyv utan
-            Book selectedBook = null;
+            MediaItem selectedBook = null;
+           
             String searchTitle = enteredTitle.trim();
 
-            for (Book book : bookList) {
+            for (MediaItem book : bookList) {
                 if (book.getTitle().contains(searchTitle)) {
-                    selectedBook = book;
+                    selectedBook = (Book) book;
                     break;
                 }
             }
@@ -544,6 +597,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                     }
                 }
                 catch(NumberFormatException e){
+                    JOptionPane.showMessageDialog(this, "Invalid rating.");
                     rating=0;
                 }
             }
@@ -555,7 +609,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             item.setStatus(status);
             currentUser.addReadingItem(item);
 
-            //saveDataInJSON(); // MENTÉS
+            saveDataInJSON(); // MENTÉS
 
             JOptionPane.showMessageDialog(this,selectedBook.getTitle() + " added to your list as " + status + ".", "Success", JOptionPane.INFORMATION_MESSAGE);
 
@@ -568,16 +622,22 @@ public class BookTrackerFrame extends javax.swing.JFrame {
 
     private void listMyBooksButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listMyBooksButtonActionPerformed
         // TODO add your handling code here:
+        saveDataInJSON();
         UpdateReadingList();
     }//GEN-LAST:event_listMyBooksButtonActionPerformed
 
     private void txtSelectBookTitleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSelectBookTitleActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSelectBookTitleActionPerformed
+
+    private void CombCategoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CombCategoryActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CombCategoryActionPerformed
     
     private void UpdateReadingList(){
         StringBuilder sb=new StringBuilder();
         sb.append(currentUser.getusername()).append("'s reading list:\n");
+        sb.append("Email: ").append(currentUser.getEmail()).append("\n");
         
         //ha nincsenek olvasasi bejegyzesei
         if(currentUser.getReadingList().isEmpty()){
@@ -586,18 +646,31 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         else{
             for(int i=0;i<currentUser.getReadingList().size();++i){
                 ReadingItem item= currentUser.getReadingList().get(i);
-                Book book= item.getBook();
+                MediaItem book= item.getBook();
                 
                 sb.append("\nTitle:").append(book.getTitle())
                   .append("\nAuthor:\n ").append(book.getAuthor());
                 
                 sb.append("\nISBN:\n" ).append(book.getISBN());
                 
-                if(book.getPage()>0){
-                    sb.append("\nPages:\n").append(book.getPage());
+                if(book instanceof Book){
+                    Book selectedBook= (Book) book;
+                    if(selectedBook.getPage()>0){
+                       sb.append("\nPages: ").append(selectedBook.getPage());
+                    }
+                    else{
+                        sb.append("\nPages: 0");
+                    }
                 }
-                else{
-                    sb.append("\nPages:\n 0");
+                else if(book instanceof EBook){
+                    EBook selectedEBook= (EBook) book;
+                    if(selectedEBook.getFileSizeMB()>0){
+                     sb.append("\nPages: ").append(selectedEBook.getFileSizeMB());   
+                    }
+                    else{
+                     sb.append("\nSize: 0MB");
+                    }
+                  sb.append("\nPrice:\n ").append(String.format("%.2f", book.calculatePrice()));
                 }
                 
                 sb.append("\nStatus:\n").append(item.getStatus());
@@ -616,7 +689,130 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         userOutputTxt.setText(sb.toString());
     }
     
+    private void saveDataInJSON(){
+        if(currentUser==null) return;
+        
+        final String filename="myBooks.json";
+        JSONArray readingListJSON=new JSONArray();
+       
+        try{
+            for(ReadingItem item : currentUser.getReadingList()){
+                JSONObject itemJson= new JSONObject();
+                MediaItem book=item.getBook();
+                
+                itemJson.put("title", book.getTitle());
+                itemJson.put("author", book.getAuthor());
+                itemJson.put("publicationYear", book.getPublicationYear());
+                itemJson.put("ISBN", book.getISBN());
+                
+                if(book instanceof Book){
+                    Book selectedBook=(Book) book;
+                    itemJson.put("page",((Book) book).getPage());
+                }
+                else if(book instanceof EBook){
+                    EBook selectedEBook=(EBook) book;
+                    itemJson.put("fileSize(MB)",((EBook) book).getFileSizeMB());
+                }
+                else{
+                    itemJson.put("type", "unknown");
+                }
+                
+              itemJson.put("rating", item.getRating());
+              itemJson.put("review", item.getReview());
+              itemJson.put("status", item.getStatus().name());
+              itemJson.put("price", book.calculatePrice());
+              
+              if(item.getStartDate()!=null){
+                  itemJson.put("startDate", item.getStartDate().toString());
+              }
+              if(item.getEndDate()!=null){
+                  itemJson.put("endDate", item.getEndDate().toString());
+              }
+              
+              readingListJSON.put(itemJson);
+            }
+          
+             try(FileWriter file= new FileWriter(filename)){
+                 file.write(readingListJSON.toString(4)); 
+             }
+              
+        }
+           catch(IOException e){
+               JOptionPane.showMessageDialog(this, "Error saving the data" + e.getMessage());
+           }
+         
+    }
     
+    private void loadDataFromJSON(){
+        if(currentUser==null) return;
+        
+        final String filename="myBooks.json";
+        
+        try{
+            String jsonString;
+            try(FileReader reader=new FileReader(filename)){
+               BufferedReader bufferedReader = new BufferedReader(reader);
+               StringBuilder sb = new StringBuilder();
+               String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+                } 
+              jsonString=sb.toString().trim();
+            }
+            
+            if(jsonString.isEmpty()){
+                JOptionPane.showMessageDialog(this,"The save file is empty.");
+            }
+            
+            JSONArray readingListJson=new JSONArray(jsonString);
+            
+            currentUser.getReadingList().clear();
+            
+            for(int i=0;i<readingListJson.length();i++){
+                JSONObject itemJson=readingListJson.getJSONObject(i);
+                
+                MediaItem book=null;
+                String type=itemJson.optString("type","Book");
+                
+                String title=itemJson.getString("title");
+                String author=itemJson.getString("author");
+                int year=itemJson.getInt("publicationYear");
+                String ISBN=itemJson.getString("ISBN");
+                
+               if(type.equals("Book")){
+                    int page=itemJson.optInt("page");
+                    book=new Book(title,author,year,ISBN,page);
+                }
+                else if(type.equals("EBook")){
+                    int fileSizeMB=itemJson.optInt("fileSizeMB");
+                    book=new EBook(title,author,year,ISBN,fileSizeMB);
+                }
+                
+                if(book==null) continue;
+                
+                int rating = itemJson.optInt("rating", 0);
+                String review = itemJson.optString("review", "");
+                String statusStr = itemJson.getString("status");
+                
+                ReadingItem.Status status = ReadingItem.Status.valueOf(statusStr);
+                
+                // Dátumok betoltese -AI segitsegevel hogy alakitsa at datumma, ternalis operatorral
+                LocalDate startDate = itemJson.has("startDate") ? LocalDate.parse(itemJson.getString("startDate")) : null;
+                LocalDate endDate = itemJson.has("endDate") ? LocalDate.parse(itemJson.getString("endDate")) : null;
+                
+                ReadingItem item = new ReadingItem(book, rating, review, startDate, endDate, status);
+                
+                currentUser.addReadingItem(item);
+            }
+            UpdateReadingList();
+        }
+        catch(IOException e){
+           JOptionPane.showMessageDialog(this, "No saved data found for " + currentUser.getusername());
+        }
+        catch(Exception e){
+            JOptionPane.showMessageDialog(this, "Error loading the json data" + e.getMessage());
+        }
+    }
     
     /**
      * @param args the command line arguments

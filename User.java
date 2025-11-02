@@ -71,7 +71,10 @@ public class User {
         int totalPage=0;
         for(ReadingItem item : readingList){
             if(item.getStatus()==ReadingItem.Status.READ){
-                totalPage += item.getBook().getPage();
+                if(item.getBook() instanceof Book){
+                    Book book= (Book) item.getBook();
+                    totalPage += book.getPage();
+                }
             }
         }
         return totalPage;
