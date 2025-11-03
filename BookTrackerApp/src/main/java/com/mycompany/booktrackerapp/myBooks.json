@@ -4,6 +4,7 @@
         "author": "Rebecca Yarros",
         "publicationYear": 2023,
         "ISBN": "9781649374172",
+        "fileSizeMB": 10,
         "rating": 5,
         "review": "legjobb fantasy",
         "status": "READ"
@@ -13,8 +14,39 @@
         "author": "Rebecca Yarros",
         "publicationYear": 2023,
         "ISBN": "9781649374080",
+        "fileSizeMB": 10,
         "rating": 5,
         "review": "legjobb konyv amit valaha olvastam",
         "status": "READ"
+    },
+    {
+        "title": "Wilder",
+        "author": "Rebecca Yarros",
+        "publicationYear": 2016,
+        "ISBN": "9781633757134",
+        "page": 805,
+        "rating": 0,
+        "review": "never heard of it",
+        "status": "WISHLIST"
+    },
+    {
+        "title": "VERITY- A NOVEL: COLLEEN HOOVER.",
+        "author": "Hoover Colleen Hoover",
+        "publicationYear": 2022,
+        "ISBN": "9781387772674",
+        "fileSizeMB": 160,
+        "rating": 5,
+        "review": "read it but not online , but it was good",
+        "status": "READ"
+    },
+    {
+        "title": "Three Wishes",
+        "author": "Lisa Manifold",
+        "publicationYear": 2015,
+        "ISBN": "9781943530045",
+        "fileSizeMB": 60,
+        "rating": 5,
+        "review": "never heard of it but sounds good",
+        "status": "WISHLIST"
     }
 ]
