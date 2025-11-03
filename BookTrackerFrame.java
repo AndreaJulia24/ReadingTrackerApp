@@ -571,7 +571,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
 
             for (MediaItem book : bookList) {
                 if (book.getTitle().contains(searchTitle)) {
-                    selectedBook = (Book) book;
+                    selectedBook = book;
                     break;
                 }
             }
