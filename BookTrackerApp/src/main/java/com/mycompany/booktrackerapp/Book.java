@@ -8,45 +8,41 @@ package com.mycompany.booktrackerapp;
  *
  * @author Andi
  */
-public class Book {
-    private String title;
-    private String author;
-    private int publicationYear;
-    private String ISBN; //egyedi azonosito
-    private int page;
+public class Book extends MediaItem {
+   
+    private static int page;
     
-    public Book(){};
+    public Book(){
+        super("","",0,"");
+    };
 
     public Book(String title, String author,int publicationYear, String ISBN, int page) {
-        this.title = title;
-        this.author = author;
-        this.publicationYear=publicationYear;
-        this.ISBN = ISBN;
-        this.page = page;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public int getPublicationYear() {
-        return publicationYear;
-    }
-
-    public String getISBN() {
-        return ISBN;
+        super(title,author,publicationYear,ISBN);
+        this.page=page;
     }
 
     public int getPage() {
         return page;
     }
-
+    
+    //interfacebol overriding
+    @Override
+    public double calculatePrice(){
+        return (double) this.page /5.0; //arszamitas pl. 5 oldal = 1 egyseg ar
+    }
+    
+    //ket toString tulterhelese -overloading
     @Override
     public String toString() {
-      return "Book{" + "title=" + title + ", author=" + author + ", publicationYear=" + publicationYear + ", ISBN=" + ISBN + ", page=" + page + '}';
-      }
+        return getSummaryInfo() + ",Page: " + page;
+    }
+    
+    public String toString(boolean showPage){
+        if(showPage){
+           return toString(); //ha van oldalszam 
+        }
+        else{
+            return getSummaryInfo(); //ha nincs
+        }
+    } 
 }

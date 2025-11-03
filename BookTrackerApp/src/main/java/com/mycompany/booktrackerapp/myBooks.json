@@ -1,0 +1,20 @@
+[
+    {
+        "title": "Iron Flame",
+        "author": "Rebecca Yarros",
+        "publicationYear": 2023,
+        "ISBN": "9781649374172",
+        "rating": 5,
+        "review": "legjobb fantasy",
+        "status": "READ"
+    },
+    {
+        "title": "Fourth Wing",
+        "author": "Rebecca Yarros",
+        "publicationYear": 2023,
+        "ISBN": "9781649374080",
+        "rating": 5,
+        "review": "legjobb konyv amit valaha olvastam",
+        "status": "READ"
+    }
+]
