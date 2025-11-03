@@ -309,7 +309,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             }
             else{ //ha az oldalszam=0; akkor EBook
                String sizeStr=JOptionPane.showInputDialog(this, "The page is 0.Add the size of Ebook(MB): ",JOptionPane.PLAIN_MESSAGE);
-               int size=0;
+               int size=10 * title.length();
                if(sizeStr!=null && sizeStr.trim().isEmpty()){
                    //hibakezeles ha veletlenul a size nem szam
                    try{
@@ -537,12 +537,6 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             case "Author: Ana Huang":
                 url=GOOGLE_BOOKS_BASE_URL + "inauthor:Ana+Huang&maxResults=" + MAX_RESULTS;
                 break;
-            case "Dark Romance ":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:Dark+Romance&maxResults=" + MAX_RESULTS;
-                break;
-            case "Computer Science ":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:Computer+Science&maxResults=" + MAX_RESULTS;
-                break;
             default:
                 JOptionPane.showMessageDialog(this,"Choose another category.");
                 break;
@@ -615,7 +609,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
 
             JOptionPane.showMessageDialog(this,selectedBook.getTitle() + " added to your list as " + status + ".", "Success", JOptionPane.INFORMATION_MESSAGE);
 
-            UpdateReadingList();
+            //UpdateReadingList();
         }
         catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error when you are selecting the books " + e.getMessage());
@@ -694,7 +688,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
      private void saveDataInJSON(){
         if(currentUser==null) return;
 
-        final String filename = "myBooks.json";
+        final String filename = "src/main/java/com/mycompany/booktrackerapp/myBooks.json";
         JSONArray readingListJson = new JSONArray();
         
         JSONObject mainJson = new JSONObject();
@@ -737,7 +731,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
      private void loadDataFromJSON(){
         if(currentUser==null) return;
 
-        final String filename = "myBooks.json";
+        final String filename = "src/main/java/com/mycompany/booktrackerapp/myBooks.json";
         File file = new File(filename);
         if(!file.exists()){
             return;
