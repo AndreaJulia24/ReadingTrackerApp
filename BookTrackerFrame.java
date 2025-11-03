@@ -2,6 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
+
 package com.mycompany.booktrackerapp;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import javax.swing.JOptionPane;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -308,10 +310,10 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             else{ //ha az oldalszam=0; akkor EBook
                String sizeStr=JOptionPane.showInputDialog(this, "The page is 0.Add the size of Ebook(MB): ",JOptionPane.PLAIN_MESSAGE);
                int size=0;
-               if(sizeStr!=null && sizeStr.isEmpty()){
+               if(sizeStr!=null && sizeStr.trim().isEmpty()){
                    //hibakezeles ha veletlenul a size nem szam
                    try{
-                       size=Integer.parseInt(sizeStr);
+                       size=Integer.parseInt(sizeStr.trim());
                    }
                    catch(NumberFormatException e){
                        JOptionPane.showMessageDialog(this, "Invalid size.");
@@ -689,131 +691,118 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         userOutputTxt.setText(sb.toString());
     }
     
-    private void saveDataInJSON(){
+     private void saveDataInJSON(){
         if(currentUser==null) return;
+
+        final String filename = "myBooks.json";
+        JSONArray readingListJson = new JSONArray();
         
-        final String filename="myBooks.json";
-        JSONArray readingListJSON=new JSONArray();
-       
-        try{
-            for(ReadingItem item : currentUser.getReadingList()){
-                JSONObject itemJson= new JSONObject();
-                MediaItem book=item.getBook();
-                
-                itemJson.put("title", book.getTitle());
-                itemJson.put("author", book.getAuthor());
-                itemJson.put("publicationYear", book.getPublicationYear());
-                itemJson.put("ISBN", book.getISBN());
-                
-                if(book instanceof Book){
-                    Book selectedBook=(Book) book;
-                    itemJson.put("page",((Book) book).getPage());
-                }
-                else if(book instanceof EBook){
-                    EBook selectedEBook=(EBook) book;
-                    itemJson.put("fileSize(MB)",((EBook) book).getFileSizeMB());
-                }
-                else{
-                    itemJson.put("type", "unknown");
-                }
-                
-              itemJson.put("rating", item.getRating());
-              itemJson.put("review", item.getReview());
-              itemJson.put("status", item.getStatus().name());
-              itemJson.put("price", book.calculatePrice());
-              
-              if(item.getStartDate()!=null){
-                  itemJson.put("startDate", item.getStartDate().toString());
-              }
-              if(item.getEndDate()!=null){
-                  itemJson.put("endDate", item.getEndDate().toString());
-              }
-              
-              readingListJSON.put(itemJson);
+        JSONObject mainJson = new JSONObject();
+        mainJson.put("username", currentUser.getusername());
+        mainJson.put("email", currentUser.getEmail());
+
+        for(ReadingItem item : currentUser.getReadingList()){
+            MediaItem book = item.getBook();
+            if(book == null) continue;
+
+            JSONObject itemJson = new JSONObject();
+            itemJson.put("title", book.getTitle());
+            itemJson.put("author", book.getAuthor());
+            itemJson.put("publicationYear", book.getPublicationYear());
+            itemJson.put("ISBN", book.getISBN());
+           //itemJson.put("page", book.getPage());
+            itemJson.put("rating", item.getRating());
+            itemJson.put("review", item.getReview());
+            itemJson.put("status", item.getStatus().name());
+
+            if(item.getStartDate()!=null){
+                itemJson.put("startDate", item.getStartDate().toString());
             }
-          
-             try(FileWriter file= new FileWriter(filename)){
-                 file.write(readingListJSON.toString(4)); 
-             }
-              
+            if(item.getEndDate()!=null){
+                itemJson.put("endDate", item.getEndDate().toString());
+            }
+
+            readingListJson.put(itemJson);
         }
-           catch(IOException e){
-               JOptionPane.showMessageDialog(this, "Error saving the data" + e.getMessage());
-           }
-         
-    }
-    
-    private void loadDataFromJSON(){
-        if(currentUser==null) return;
-        
-        final String filename="myBooks.json";
-        
-        try{
-            String jsonString;
-            try(FileReader reader=new FileReader(filename)){
-               BufferedReader bufferedReader = new BufferedReader(reader);
-               StringBuilder sb = new StringBuilder();
-               String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-                } 
-              jsonString=sb.toString().trim();
-            }
-            
-            if(jsonString.isEmpty()){
-                JOptionPane.showMessageDialog(this,"The save file is empty.");
-            }
-            
-            JSONArray readingListJson=new JSONArray(jsonString);
-            
-            currentUser.getReadingList().clear();
-            
-            for(int i=0;i<readingListJson.length();i++){
-                JSONObject itemJson=readingListJson.getJSONObject(i);
-                
-                MediaItem book=null;
-                String type=itemJson.optString("type","Book");
-                
-                String title=itemJson.getString("title");
-                String author=itemJson.getString("author");
-                int year=itemJson.getInt("publicationYear");
-                String ISBN=itemJson.getString("ISBN");
-                
-               if(type.equals("Book")){
-                    int page=itemJson.optInt("page");
-                    book=new Book(title,author,year,ISBN,page);
-                }
-                else if(type.equals("EBook")){
-                    int fileSizeMB=itemJson.optInt("fileSizeMB");
-                    book=new EBook(title,author,year,ISBN,fileSizeMB);
-                }
-                
-                if(book==null) continue;
-                
-                int rating = itemJson.optInt("rating", 0);
-                String review = itemJson.optString("review", "");
-                String statusStr = itemJson.getString("status");
-                
-                ReadingItem.Status status = ReadingItem.Status.valueOf(statusStr);
-                
-                // Dátumok betoltese -AI segitsegevel hogy alakitsa at datumma, ternalis operatorral
-                LocalDate startDate = itemJson.has("startDate") ? LocalDate.parse(itemJson.getString("startDate")) : null;
-                LocalDate endDate = itemJson.has("endDate") ? LocalDate.parse(itemJson.getString("endDate")) : null;
-                
-                ReadingItem item = new ReadingItem(book, rating, review, startDate, endDate, status);
-                
-                currentUser.addReadingItem(item);
-            }
-            UpdateReadingList();
+
+        try(FileWriter file = new FileWriter(filename)){
+            file.write(readingListJson.toString(4));
         }
         catch(IOException e){
-           JOptionPane.showMessageDialog(this, "No saved data found for " + currentUser.getusername());
-        }
-        catch(Exception e){
-            JOptionPane.showMessageDialog(this, "Error loading the json data" + e.getMessage());
+            logger.log(Level.WARNING, "Error saving reading list", e);
+            JOptionPane.showMessageDialog(this, "Error saving the data: " + e.getMessage());
         }
     }
     
+     private void loadDataFromJSON(){
+        if(currentUser==null) return;
+
+        final String filename = "myBooks.json";
+        File file = new File(filename);
+        if(!file.exists()){
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        try(BufferedReader reader = new BufferedReader(new FileReader(file))){
+            String line;
+            while((line = reader.readLine()) != null){
+                sb.append(line);
+            }
+        }
+        catch(IOException e){
+            logger.log(Level.WARNING, "Error reading saved data", e);
+            JOptionPane.showMessageDialog(this, "Error loading the json data: " + e.getMessage());
+            return;
+        }
+
+        String jsonString = sb.toString().trim();
+        if(jsonString.isEmpty()){
+            return;
+        }
+
+        try{
+            JSONArray readingListArray = new JSONArray(jsonString);
+            currentUser.getReadingList().clear();
+
+            for(int i=0;i<readingListArray.length();i++){
+                JSONObject itemJson = readingListArray.getJSONObject(i);
+
+                String title = itemJson.optString("title", "");
+                String author = itemJson.optString("author", "");
+                int publicationYear = itemJson.optInt("publicationYear", 0);
+                String ISBN = itemJson.optString("ISBN", "");
+                int page = itemJson.optInt("page", itemJson.optInt("pages", 0));
+
+                Book book = new Book(title, author, publicationYear, ISBN, page);
+
+                int rating = itemJson.optInt("rating", 0);
+                String review = itemJson.optString("review", "");
+                String statusStr = itemJson.optString("status", ReadingItem.Status.WISHLIST.name());
+
+                LocalDate startDate = itemJson.has("startDate") ? LocalDate.parse(itemJson.getString("startDate")) : null;
+                LocalDate endDate = itemJson.has("endDate") ? LocalDate.parse(itemJson.getString("endDate")) : null;
+
+                ReadingItem.Status status;
+                try{
+                    status = ReadingItem.Status.valueOf(statusStr);
+                }
+                catch(IllegalArgumentException ex){
+                    status = ReadingItem.Status.WISHLIST;
+                }
+
+                ReadingItem item = new ReadingItem(book, rating, review, startDate, endDate, status);
+                currentUser.addReadingItem(item);
+            }
+
+            UpdateReadingList();
+        }
+        catch(Exception e){
+            logger.log(Level.WARNING, "Error parsing saved data", e);
+            JOptionPane.showMessageDialog(this, "Error loading the json data: " + e.getMessage());
+        }
+    }
+
     /**
      * @param args the command line arguments
      */

@@ -1,3 +1,72 @@
 [
-  
+    {
+        "title": "Twisted Love",
+        "author": "Ana Huang",
+        "publicationYear": 2023,
+        "ISBN": "9789180007238",
+        "rating": 5,
+        "review": "best romance book",
+        "status": "READ",
+        "page": 363
+    },
+    {
+        "title": "November 9",
+        "author": "Colleen Hoover",
+        "publicationYear": 2015,
+        "ISBN": "9781501110351",
+        "rating": 0,
+        "review": "5",
+        "status": "READ",
+        "page": 363
+    },
+    {
+        "title": "Maybe Someday",
+        "author": "Colleen Hoover",
+        "publicationYear": 2025,
+        "ISBN": "9781668097434",
+        "rating": 5,
+        "review": "-1",
+        "status": "IN_PROGRESS",
+        "page": 363
+    },
+    {
+        "title": "All Your Perfects",
+        "author": "Colleen Hoover",
+        "publicationYear": 2025,
+        "ISBN": "9781668087329",
+        "rating": 5,
+        "review": "idk",
+        "status": "READ",
+        "page": 363
+    },
+    {
+        "title": "Iron Flame",
+        "author": "Rebecca Yarros",
+        "publicationYear": 2023,
+        "ISBN": "9781649374172",
+        "rating": 5,
+        "review": "good",
+        "status": "READ",
+        "page": 363
+    },
+    {
+        "title": "The Striker",
+        "author": "Ana Huang",
+        "publicationYear": 2024,
+        "ISBN": "9780349442242",
+        "rating": 5,
+        "review": "-1",
+        "status": "WISHLIST",
+        "page": 363
+    },
+    {
+        "title": "Twisted Love",
+        "author": "Ana Huang",
+        "publicationYear": 2022,
+        "ISBN": "9780349434278",
+        "rating": 5,
+        "review": "goog",
+        "status": "READ",
+        "fileSize(MB)": 0
+    }
 ]
