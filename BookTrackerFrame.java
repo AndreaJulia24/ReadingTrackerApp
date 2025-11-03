@@ -31,6 +31,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BookTrackerFrame.class.getName());
     private List<MediaItem>bookList=new ArrayList<>();
+    private List<MediaItem>eBookList=new ArrayList<>();
     private User currentUser;
     /**
      * Creates new form BookTrackerFrame
@@ -47,8 +48,6 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         CombCategory.addItem("Author: Rebecca Yarros");
         CombCategory.addItem("Author: Colleen Hoover");
         CombCategory.addItem("Author: Ana Huang");
-        CombCategory.addItem("Dark Romance");
-        CombCategory.addItem("Computer Science");
     }
     
     private void initializeUser(){
@@ -202,9 +201,9 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jlblAuthor))
@@ -222,36 +221,36 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jTxtISBN, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(26, 26, 26)
-                                .addComponent(jLabel4)
-                                .addGap(18, 18, 18)
-                                .addComponent(jTxtPage, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(81, 81, 81)
-                                .addComponent(ButtonAddBook)))
-                        .addGap(23, 23, 23))
+                        .addGap(81, 81, 81)
+                        .addComponent(ButtonAddBook))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(CombCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(119, 119, 119)
-                                .addComponent(LoadButton))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(CombCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 441, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(selectMyBooks)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 311, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(txtSelectBookTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(listMyBooksButton)))
-                        .addContainerGap())))
+                                .addGap(443, 443, 443)
+                                .addComponent(jLabel4)
+                                .addGap(18, 18, 18))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(LoadButton)
+                                .addGap(31, 31, 31)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTxtPage, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(6, 6, 6)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(selectMyBooks)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(txtSelectBookTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(listMyBooksButton))))
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -271,19 +270,27 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                     .addComponent(ButtonAddBook)
                     .addComponent(JtxtAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTxtISBN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(CombCategory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LoadButton)
-                    .addComponent(txtSelectBookTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(listMyBooksButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(selectMyBooks)
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addGap(28, 28, 28)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(LoadButton)
+                                    .addComponent(txtSelectBookTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(listMyBooksButton)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(selectMyBooks))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(CombCategory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
 
         lblTitle.getAccessibleContext().setAccessibleName("");
@@ -309,15 +316,20 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             }
             else{ //ha az oldalszam=0; akkor EBook
                String sizeStr=JOptionPane.showInputDialog(this, "The page is 0.Add the size of Ebook(MB): ",JOptionPane.PLAIN_MESSAGE);
-               int size=10 * title.length();
+               int size=Math.max(10, 10 * title.length());
                if(sizeStr!=null && sizeStr.trim().isEmpty()){
                    //hibakezeles ha veletlenul a size nem szam
                    try{
-                       size=Integer.parseInt(sizeStr.trim());
+                       int parsedSize=Integer.parseInt(sizeStr.trim());
+                       if(parsedSize>0){
+                           size=parsedSize;
+                       }
+                       else{
+                           JOptionPane.showMessageDialog(this,"Not positive number.Using default size: "+size+ "MB");
+                       }
                    }
                    catch(NumberFormatException e){
-                       JOptionPane.showMessageDialog(this, "Invalid size.");
-                       size=0; 
+                       JOptionPane.showMessageDialog(this, "Invalid size formatUsing default size: "+size+"MB");
                    }
                }
               mediaItem=new EBook(title,author,publicationYear,ISBN,size); 
@@ -397,6 +409,9 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         JSONArray bookEntries =json.optJSONArray("items");
         
         bookList.clear();
+        eBookList.clear();
+        
+        
         
         if(bookEntries == null){
             JOptionPane.showMessageDialog(this, "No books was found for this category");
@@ -451,11 +466,14 @@ public class BookTrackerFrame extends javax.swing.JFrame {
              MediaItem mediaItem;
              if(page>0){
                  mediaItem=new Book(title,author,publicationYear,ISBN,page);
+                 bookList.add(mediaItem);
              }
              else{
-                 mediaItem=new EBook(title,author,publicationYear,ISBN,0);
+                 int defaultSizeMB=Math.max(10, title.length() * 5);
+                 mediaItem=new EBook(title,author,publicationYear,ISBN,defaultSizeMB);
+                 eBookList.add(mediaItem);
              }
-             bookList.add(mediaItem);
+             
           }   
         updateOutputTxt();
       }
@@ -466,26 +484,38 @@ public class BookTrackerFrame extends javax.swing.JFrame {
     
     private void updateOutputTxt(){
         StringBuilder sb=new StringBuilder();
-        for(MediaItem book : bookList){
-            if(book instanceof Book){
-                Book selectedBook=(Book) book;
-                 sb.append(book.getTitle())
-                   .append(" by ").append(selectedBook.getAuthor())
-                   .append(" (").append(selectedBook.getPublicationYear()).append(")")
-                   .append(", ISBN: ").append(selectedBook.getISBN())
-                   .append(", ").append(selectedBook.getPage()).append("pages")
-                   .append("\n");
+        if(!bookList.isEmpty()){
+            sb.append("--BOOKS\n--");
+            for(MediaItem book : bookList){
+               Book selectedBook = (Book) book;
+                sb.append(book.getTitle())
+                  .append(" by ").append(selectedBook.getAuthor())
+                  .append(" (").append(selectedBook.getPublicationYear()).append(")")
+                  .append(", ISBN: ").append(selectedBook.getISBN())
+                  .append(", ").append(selectedBook.getPage()).append("pages")
+                  .append("\n"); 
             }
-            else if(book instanceof EBook){
-                EBook selectedEBook=(EBook) book;
-                    sb.append("E-Book: ")
-                   .append(book.getTitle())
-                   .append(" by ").append(selectedEBook.getAuthor())
-                   .append(" (").append(selectedEBook.getPublicationYear()).append(")")
-                   .append(", ISBN: ").append(selectedEBook.getISBN())
-                   .append(", Size: ").append(selectedEBook.getFileSizeMB()).append(" MB")
-                   .append("\n");
+        }
+        
+        if(!eBookList.isEmpty()){
+           if(!bookList.isEmpty()){
+               sb.append("\n");
+           }
+          sb.append("--E-BOOKS\n--");
+          for(MediaItem book : eBookList){
+                EBook selectedEBook = (EBook) book;
+                sb.append("E-Book: ")
+                  .append(book.getTitle())
+                  .append(" by ").append(selectedEBook.getAuthor())
+                  .append(" (").append(selectedEBook.getPublicationYear()).append(")")
+                  .append(", ISBN: ").append(selectedEBook.getISBN())
+                  .append(", Size: ").append(selectedEBook.getFileSizeMB()).append(" MB")
+                  .append("\n");
             }
+        }
+        
+        if(bookList.isEmpty() && eBookList.isEmpty()){
+            sb.append("No books loaded from API");
         }
         outputTxt.setText(sb.toString());
     }
@@ -526,7 +556,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 url=GOOGLE_BOOKS_BASE_URL + "subject:Young+Adult&langRestrict=en&maxResults=" + MAX_RESULTS;
                 break;
             case "Young Adult (HU)":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:Young+Adult&langRestrict=hu&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Young+Adult&langRestrict=en&maxResults=" + MAX_RESULTS;
                 break;
             case "Author: Rebecca Yarros":
                  url=GOOGLE_BOOKS_BASE_URL + "inauthor:Rebecca+Yarros&maxResults=" + MAX_RESULTS; 
@@ -571,6 +601,14 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                     break;
                 }
             }
+            
+            if (selectedBook == null) {
+              for(MediaItem book : eBookList){
+                  if(book.getTitle().contains(searchTitle)){
+                      selectedBook=book;
+                  }
+              }
+           }
 
             if (selectedBook == null) {
                 JOptionPane.showMessageDialog(this, "The selected title was not found in the loaded list.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -660,8 +698,9 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 }
                 else if(book instanceof EBook){
                     EBook selectedEBook= (EBook) book;
-                    if(selectedEBook.getFileSizeMB()>0){
-                     sb.append("\nPages: ").append(selectedEBook.getFileSizeMB());   
+                    double sizeMB = selectedEBook.getFileSizeMB();
+                    if(sizeMB>0){
+                     sb.append("\nSize: ").append(sizeMB).append("MB");  
                     }
                     else{
                      sb.append("\nSize: 0MB");
@@ -704,7 +743,14 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             itemJson.put("author", book.getAuthor());
             itemJson.put("publicationYear", book.getPublicationYear());
             itemJson.put("ISBN", book.getISBN());
-           //itemJson.put("page", book.getPage());
+            
+            if(book instanceof Book){
+                itemJson.put("page", ((Book) book).getPage());
+            }
+            else if(book instanceof EBook){
+                itemJson.put("fileSizeMB", ((EBook) book).getFileSizeMB());
+            }
+            
             itemJson.put("rating", item.getRating());
             itemJson.put("review", item.getReview());
             itemJson.put("status", item.getStatus().name());
@@ -768,8 +814,17 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 String ISBN = itemJson.optString("ISBN", "");
                 int page = itemJson.optInt("page", itemJson.optInt("pages", 0));
 
-                Book book = new Book(title, author, publicationYear, ISBN, page);
-
+                //Book book = new Book(title, author, publicationYear, ISBN, page);
+                
+                MediaItem book;
+                if(page>0){
+                    book=new Book(title, author, publicationYear, ISBN, page);
+                }
+                else{
+                  int fileSize=itemJson.optInt("fileSizeMB",10);
+                  book=new EBook(title, author, publicationYear, ISBN, fileSize);
+                }
+                
                 int rating = itemJson.optInt("rating", 0);
                 String review = itemJson.optString("review", "");
                 String statusStr = itemJson.optString("status", ReadingItem.Status.WISHLIST.name());
