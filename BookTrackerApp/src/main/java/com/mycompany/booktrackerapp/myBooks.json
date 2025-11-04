@@ -24,7 +24,7 @@
         "author": "Rebecca Yarros",
         "publicationYear": 2016,
         "ISBN": "9781633757134",
-        "page": 805,
+        "page": 626,
         "rating": 0,
         "review": "never heard of it",
         "status": "WISHLIST"
@@ -48,5 +48,45 @@
         "rating": 5,
         "review": "never heard of it but sounds good",
         "status": "WISHLIST"
+    },
+    {
+        "title": "Egyszer",
+        "author": "Leiner Laura",
+        "publicationYear": 2017,
+        "ISBN": "9786155653384",
+        "page": 626,
+        "rating": 4,
+        "review": "Probalok nekifogni de meg nem vettem ra magam",
+        "status": "WISHLIST"
+    },
+    {
+        "title": "Ugly Love",
+        "author": "Colleen Hoover",
+        "publicationYear": 2014,
+        "ISBN": "9781476753188",
+        "page": 626,
+        "rating": 5,
+        "review": "legjobb romantikus konyv",
+        "status": "READ"
+    },
+    {
+        "title": "Ég veled",
+        "author": "Leiner Laura",
+        "publicationYear": 0,
+        "ISBN": "9786155653421",
+        "page": 626,
+        "rating": 5,
+        "review": "masodik legjobb magyar konyvsorozat",
+        "status": "READ"
+    },
+    {
+        "title": "Onyx Storm",
+        "author": "Rebecca Yarros",
+        "publicationYear": 2025,
+        "ISBN": "9789510514993",
+        "page": 626,
+        "rating": 5,
+        "review": "good but the ending was horrible",
+        "status": "READ"
     }
 ]

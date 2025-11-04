@@ -5,9 +5,12 @@ com\mycompany\booktrackerapp\BookTrackerApp.class
 com\mycompany\booktrackerapp\ReadingItem.class
 com\mycompany\booktrackerapp\Book.class
 com\mycompany\booktrackerapp\BookTrackerFrame$2.class
+com\mycompany\booktrackerapp\Publication.class
 com\mycompany\booktrackerapp\BookTrackerFrame$7.class
 com\mycompany\booktrackerapp\BookTrackerFrame$6.class
 com\mycompany\booktrackerapp\BookTrackerFrame$1.class
+com\mycompany\booktrackerapp\EBook.class
+com\mycompany\booktrackerapp\MediaItem.class
 com\mycompany\booktrackerapp\BookTrackerFrame$8.class
 com\mycompany\booktrackerapp\User.class
 com\mycompany\booktrackerapp\BookTrackerFrame$5.class
