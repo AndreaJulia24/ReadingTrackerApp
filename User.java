@@ -48,7 +48,6 @@ public class User {
         this.readingList.add(item);
     }
     
-    //listazza az olvasi bejegyzeseit a Usernek (konzolos verzió, amit a GUI nem használ)
     public void listReadingItem(User user){
         
         if(user==null){

@@ -48,6 +48,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         CombCategory.addItem("Author: Rebecca Yarros");
         CombCategory.addItem("Author: Colleen Hoover");
         CombCategory.addItem("Author: Ana Huang");
+        CombCategory.addItem("Author: Leiner Laura");
     }
     
     private void initializeUser(){
@@ -411,8 +412,6 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         bookList.clear();
         eBookList.clear();
         
-        
-        
         if(bookEntries == null){
             JOptionPane.showMessageDialog(this, "No books was found for this category");
             updateOutputTxt();
@@ -530,7 +529,6 @@ public class BookTrackerFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jTxtPageActionPerformed
 
     private void LoadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoadButtonActionPerformed
-        // TODO add your handling code here:
        String selected = (String)CombCategory.getSelectedItem();
        String url="";
        final String GOOGLE_BOOKS_BASE_URL = "https://www.googleapis.com/books/v1/volumes?q=";
@@ -553,10 +551,10 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 url=GOOGLE_BOOKS_BASE_URL + "subject:Thriller&maxResults=" + MAX_RESULTS;
                 break;
             case "Young Adult (EN)":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:Young+Adult&langRestrict=en&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "subject:fiction+romance&langRestrict=en&maxResults=" + MAX_RESULTS;
                 break;
             case "Young Adult (HU)":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:Young+Adult&langRestrict=en&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "subject:fiction=thriller&langRestrict=hu&maxResults=" + MAX_RESULTS;
                 break;
             case "Author: Rebecca Yarros":
                  url=GOOGLE_BOOKS_BASE_URL + "inauthor:Rebecca+Yarros&maxResults=" + MAX_RESULTS; 
@@ -566,6 +564,9 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 break;
             case "Author: Ana Huang":
                 url=GOOGLE_BOOKS_BASE_URL + "inauthor:Ana+Huang&maxResults=" + MAX_RESULTS;
+                break;
+            case "Author: Leiner Laura":
+                url=GOOGLE_BOOKS_BASE_URL + "inauthor:Leiner+Laura&maxResults=" + MAX_RESULTS;
                 break;
             default:
                 JOptionPane.showMessageDialog(this,"Choose another category.");
