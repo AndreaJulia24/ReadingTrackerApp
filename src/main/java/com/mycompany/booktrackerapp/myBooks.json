@@ -1,1 +1,112 @@
-
+[
+    {
+        "title": "Iron Flame",
+        "author": "Rebecca Yarros",
+        "publicationYear": 2023,
+        "ISBN": "9781649374172",
+        "fileSizeMB": 10,
+        "rating": 5,
+        "review": "legjobb fantasy",
+        "status": "READ"
+    },
+    {
+        "title": "Fourth Wing",
+        "author": "Rebecca Yarros",
+        "publicationYear": 2023,
+        "ISBN": "9781649374080",
+        "fileSizeMB": 10,
+        "rating": 5,
+        "review": "legjobb konyv amit valaha olvastam",
+        "status": "READ"
+    },
+    {
+        "title": "Wilder",
+        "author": "Rebecca Yarros",
+        "publicationYear": 2016,
+        "ISBN": "9781633757134",
+        "page": 363,
+        "rating": 0,
+        "review": "never heard of it",
+        "status": "WISHLIST"
+    },
+    {
+        "title": "VERITY- A NOVEL: COLLEEN HOOVER.",
+        "author": "Hoover Colleen Hoover",
+        "publicationYear": 2022,
+        "ISBN": "9781387772674",
+        "fileSizeMB": 160,
+        "rating": 5,
+        "review": "read it but not online , but it was good",
+        "status": "READ"
+    },
+    {
+        "title": "Three Wishes",
+        "author": "Lisa Manifold",
+        "publicationYear": 2015,
+        "ISBN": "9781943530045",
+        "fileSizeMB": 60,
+        "rating": 5,
+        "review": "never heard of it but sounds good",
+        "status": "WISHLIST"
+    },
+    {
+        "title": "Egyszer",
+        "author": "Leiner Laura",
+        "publicationYear": 2017,
+        "ISBN": "9786155653384",
+        "page": 363,
+        "rating": 4,
+        "review": "Probalok nekifogni de meg nem vettem ra magam",
+        "status": "WISHLIST"
+    },
+    {
+        "title": "Ugly Love",
+        "author": "Colleen Hoover",
+        "publicationYear": 2014,
+        "ISBN": "9781476753188",
+        "page": 363,
+        "rating": 5,
+        "review": "legjobb romantikus konyv",
+        "status": "READ"
+    },
+    {
+        "title": "Ég veled",
+        "author": "Leiner Laura",
+        "publicationYear": 0,
+        "ISBN": "9786155653421",
+        "page": 363,
+        "rating": 5,
+        "review": "masodik legjobb magyar konyvsorozat",
+        "status": "READ"
+    },
+    {
+        "title": "Onyx Storm",
+        "author": "Rebecca Yarros",
+        "publicationYear": 2025,
+        "ISBN": "9789510514993",
+        "page": 363,
+        "rating": 5,
+        "review": "good but the ending was horrible",
+        "status": "READ"
+    },
+    {
+        "title": "Nem egyszerű",
+        "author": "Leiner Laura",
+        "publicationYear": 2023,
+        "ISBN": "9786155872198",
+        "page": 363,
+        "rating": 5,
+        "review": "nagyon tesztett",
+        "status": "READ"
+    },
+    {
+        "title": "The Defender",
+        "author": "Ana Huang",
+        "publicationYear": 2025,
+        "ISBN": "9780349442266",
+        "page": 363,
+        "rating": 5,
+        "review": "good",
+        "status": "READ"
+    }
+]
