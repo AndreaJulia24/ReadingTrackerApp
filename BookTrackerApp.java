@@ -12,7 +12,7 @@ public class BookTrackerApp {
     public static void main(String[] args) {
         
         BookTrackerFrame myFrame = new BookTrackerFrame();
-        myFrame.setVisible(true);
+        myFrame.setVisible(true); 
     }
     
 }

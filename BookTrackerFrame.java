@@ -20,8 +20,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Locale;
+import javax.swing.SwingUtilities;
 
+import java.lang.Runnable;
 import java.util.logging.Level;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -301,7 +304,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     private void ButtonAddBookActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonAddBookActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:  //ez a fo logika 
         try{
             String title=txtTitle.getText().trim();
             String author=JtxtAuthor.getText().trim();
@@ -385,7 +388,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
              JOptionPane.showMessageDialog(this, "Invalid status.Please use: READ,IN_PROGRESS,WISHLIST");
         }
     }//GEN-LAST:event_ButtonAddBookActionPerformed
-    private void fetchBooksFromAPI(String urlString){
+  /*  private void fetchBooksFromAPI(String urlString){
         
         try{
             //kapcsolodas az URL-hez
@@ -519,7 +522,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         outputTxt.setText(sb.toString());
     }
     
-   
+   */
     private void jTxtISBNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTxtISBNActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTxtISBNActionPerformed
@@ -528,6 +531,8 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTxtPageActionPerformed
 
+//ez a loadbutton metodus az API-bol kategoria szerint meghivja ,lekeri a neki tartozo linket,api-t
+    
     private void LoadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoadButtonActionPerformed
        String selected = (String)CombCategory.getSelectedItem();
        String url="";
@@ -573,10 +578,24 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 break;
         }
         
-        if(url.startsWith("https://")){
+       /* if(url.startsWith("https://")){
           fetchBooksFromAPI(url);
         }
         else if(!url.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Error loading books.");
+        }*/
+        
+        final String finalUrl = url;
+        
+        if(finalUrl.startsWith("https://")){
+            // UI visszajelzés a fő szálon
+            outputTxt.setText("Loading books from API..."); 
+            
+            // ÚJ: Elindítja a hosszantartó munkát egy új Thread-en
+            new Thread(new BookSearchRunnable(finalUrl) {}).start();
+            
+        }
+        else if(!finalUrl.isEmpty()){
             JOptionPane.showMessageDialog(this, "Error loading books.");
         }
     }//GEN-LAST:event_LoadButtonActionPerformed
@@ -723,11 +742,12 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         }
         
         userOutputTxt.setText(sb.toString());
-    }
+    } 
     
      private void saveDataInJSON(){
         if(currentUser==null) return;
-
+        
+        //itt azert kell az egesz mappa mert maskepp nem fogadja el, tolti be 
         final String filename = "src/main/java/com/mycompany/booktrackerapp/myBooks.json";
         JSONArray readingListJson = new JSONArray();
         
@@ -877,6 +897,157 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new BookTrackerFrame().setVisible(true));
     }
+    
+ private abstract class BookSearchRunnable implements Runnable {
+    
+        private String urlString = "";
+
+    public BookSearchRunnable(String urlString){
+        this.urlString=urlString;
+    }
+
+    @Override
+    public void run(){
+        String resultText = "Error loading books."; // Alapértelmezett hibaüzenet
+            
+            try {
+                //A FETCHBOOKSFROMAPI logika
+                URL url=new URL(urlString);
+                HttpURLConnection conn=(HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                
+                BufferedReader reader= new BufferedReader(new InputStreamReader(conn.getInputStream(),"UTF-8"));
+                StringBuilder response=new StringBuilder();
+                String line;
+                
+                while ((line = reader.readLine()) != null) {
+                     response.append(line);
+                     }    
+                
+                reader.close();
+            
+                // --- ADATFELDOLGOZAS ---
+                JSONObject json = new JSONObject(response.toString());
+                JSONArray bookEntries =json.optJSONArray("items");
+                
+                bookList.clear();
+                eBookList.clear();
+                
+                if(bookEntries == null){
+                    resultText = "No books was found for this category";
+                } else {
+
+                    //JSON feldolgozas 
+                    for(int i=0;i<bookEntries.length();++i){
+                        JSONObject itemObj=bookEntries.getJSONObject(i);
+                        
+                        JSONObject volumeInfo = itemObj.optJSONObject("volumeInfo");
+                        if (volumeInfo == null) continue;
+                        
+                        String title=volumeInfo.optString("title", "unknown Title");
+                        String author="Unknown Author";
+                        
+                        JSONArray authors=volumeInfo.optJSONArray("authors");
+                        if(authors != null && authors.length()>0){ 
+                             author=authors.getString(0);
+                        }
+                        
+                        int publicationYear = 0;
+                        String publishedDate=volumeInfo.optString("publishedDate","");
+                        
+                        if(!publishedDate.isEmpty()){
+                           try{
+                               String yearStr=publishedDate.substring(0,Math.min(publishedDate.length(),4 ));
+                               publicationYear=Integer.parseInt(yearStr);
+                           }
+                           catch(NumberFormatException e){
+                               publicationYear=0;
+                           }
+                        }
+                        
+                        int page=volumeInfo.optInt("pageCount",0);
+                        String ISBN= "N/A";
+                        JSONArray identifiers=volumeInfo.optJSONArray("industryIdentifiers");
+                        if(identifiers!=null){
+                            for(int j=0;j<identifiers.length();++j){
+                                JSONObject identifier=identifiers.getJSONObject(j);
+                                String type= identifier.optString("type");
+                                if(type.equals("ISBN_13")){
+                                    ISBN=identifier.optString("identifier");
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        MediaItem mediaItem;
+                        if(page>0){
+                            mediaItem=new Book(title,author,publicationYear,ISBN,page);
+                            bookList.add(mediaItem);
+                        }
+                        else{
+                            int defaultSizeMB=Math.max(10, title.length() * 5);
+                            mediaItem=new EBook(title,author,publicationYear,ISBN,defaultSizeMB);
+                            eBookList.add(mediaItem);
+                        }
+                    }
+                    
+                    // az updateOutputTxt logikaja
+                    StringBuilder sb=new StringBuilder();
+                    if(!bookList.isEmpty()){
+                        sb.append("--BOOKS\n--");
+                        for(MediaItem book : bookList){
+                           Book selectedBook = (Book) book;
+                            sb.append(book.getTitle())
+                              .append(" by ").append(selectedBook.getAuthor())
+                              .append(" (").append(selectedBook.getPublicationYear()).append(")")
+                              .append(", ISBN: ").append(selectedBook.getISBN())
+                              .append(", ").append(selectedBook.getPage()).append("pages")
+                              .append("\n"); 
+                        }
+                    }
+                    
+                    if(!eBookList.isEmpty()){
+                       if(!bookList.isEmpty()){
+                           sb.append("\n");
+                       }
+                      sb.append("--E-BOOKS\n--");
+                      for(MediaItem book : eBookList){
+                            EBook selectedEBook = (EBook) book;
+                            sb.append("E-Book: ")
+                              .append(book.getTitle())
+                              .append(" by ").append(selectedEBook.getAuthor())
+                              .append(" (").append(selectedEBook.getPublicationYear()).append(")")
+                              .append(", ISBN: ").append(selectedEBook.getISBN())
+                              .append(", Size: ").append(selectedEBook.getFileSizeMB()).append(" MB")
+                              .append("\n");
+                        }
+                    }
+                    
+                    if(bookList.isEmpty() && eBookList.isEmpty()){
+                        sb.append("No books loaded from API");
+                    }
+                    resultText = sb.toString();
+                }
+
+            } catch(Exception e) {
+                logger.log(Level.WARNING, "Error loading books in thread", e);
+                resultText = "Error loading books: " + e.getMessage();
+            }
+            
+            final String finalResultText = resultText;
+            
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    outputTxt.setText(finalResultText);
+                    if (finalResultText.startsWith("Error") || finalResultText.equals("No books was found for this category")) {
+                        JOptionPane.showMessageDialog(BookTrackerFrame.this, finalResultText);
+                    }
+                }
+            });
+    }
+ }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ButtonAddBook;

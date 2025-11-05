@@ -16,9 +16,9 @@ public  class EBook extends MediaItem {
        super(title,author,publicationYear,ISBN);
        this.fileSizeMB=fileSizeMB;
    }
-
+   
     public int getFileSizeMB() {
-        return fileSizeMB;
+        return fileSizeMB; 
     }
     
     //interfacebol a metodus, overriding
