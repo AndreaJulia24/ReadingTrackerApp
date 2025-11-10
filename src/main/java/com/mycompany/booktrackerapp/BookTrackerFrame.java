@@ -571,10 +571,10 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         if(selected != null)
             switch (selected) {
             case "Fantasy":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:Fantasy&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Fantasy&orderBy=newest&maxResults=" + MAX_RESULTS;
                 break;
             case "Romance":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:Romance&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Romance&orderBy=relevance&maxResults=" + MAX_RESULTS;
                 break;
             case "Thriller":
                 url=GOOGLE_BOOKS_BASE_URL + "subject:Thriller&maxResults=" + MAX_RESULTS;
@@ -598,7 +598,8 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 url=GOOGLE_BOOKS_BASE_URL + "inauthor:Leiner+Laura&maxResults=" + MAX_RESULTS;
                 break;
             case "Category: AudioBook":
-                url=GOOGLE_BOOKS_BASE_URL + "audiobook+OR+listen&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "audiobook+OR+listen&orderBy=newest"
+                        + "&maxResults=" + MAX_RESULTS;
                 break;
             default:
                 JOptionPane.showMessageDialog(this,"Choose another category.");
@@ -1028,7 +1029,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                         MediaItem mediaItem;
                         if(urlString.contains("audiobook+OR+listen")){
                             int durationMin=Math.max(10, title.length() * 2);
-                            mediaItem=new Book(title,author,publicationYear,ISBN, durationMin);
+                            mediaItem=new AudioBook(title,author,publicationYear,ISBN, durationMin);
                             audioBookList.add(mediaItem);
                         }
                         else if(page>0){
@@ -1045,7 +1046,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                     // az updateOutputTxt logikaja
                     StringBuilder sb=new StringBuilder();
                     if(!bookList.isEmpty()){
-                        sb.append("--BOOKS\n--");
+                        sb.append("BOOKS\n--");
                         for(MediaItem book : bookList){
                            Book selectedBook = (Book) book;
                             sb.append(book.getTitle())
@@ -1061,10 +1062,9 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                        if(!bookList.isEmpty()){
                            sb.append("\n");
                        }
-                      sb.append("--E-BOOKS\n--");
                       for(MediaItem book : eBookList){
                             EBook selectedEBook = (EBook) book;
-                            sb.append("E-Book: ")
+                           sb.append("E-BOOKS\n: ")
                               .append(book.getTitle())
                               .append(" by ").append(selectedEBook.getAuthor())
                               .append(" (").append(selectedEBook.getPublicationYear()).append(")")
@@ -1078,10 +1078,10 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                           sb.append("\n");
                       }
                     }
-                    sb.append("---AUDIO BOOKS\n---");
+                    //sb.append("AUDIO BOOKS\n---");
                     for(MediaItem book : audioBookList){
                        AudioBook selectedAudioBook=(AudioBook) book;
-                       sb.append("Audio book: ")
+                       sb.append("AUDIO BOOKS\n: ")
                          .append(book.getTitle())
                          .append(" by ").append(selectedAudioBook.getAuthor())
                          .append(" (").append(selectedAudioBook.getPublicationYear()).append(")")
