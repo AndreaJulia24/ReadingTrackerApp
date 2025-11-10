@@ -35,6 +35,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BookTrackerFrame.class.getName());
     private List<MediaItem>bookList=new ArrayList<>();
     private List<MediaItem>eBookList=new ArrayList<>();
+    private List<MediaItem>audioBookList=new ArrayList<>();
     private User currentUser;
     /**
      * Creates new form BookTrackerFrame
@@ -52,6 +53,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         CombCategory.addItem("Author: Colleen Hoover");
         CombCategory.addItem("Author: Ana Huang");
         CombCategory.addItem("Author: Leiner Laura");
+        CombCategory.addItem("Category: AudioBook");
     }
     
     private void initializeUser(){
@@ -314,11 +316,33 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             int page=Integer.parseInt(jTxtPage.getText().trim());
             MediaItem mediaItem;
             
-            //polimorfikus letrehozas-oroklodes
-            if(page>0){ //ha van oldalszam akkor Book
+            //polimorfikus letrehozas-oroklodes 
+            //Ha az oldalszam kevesebb akkor AudioBook 
+            if(page<0){
+                String durationStr=JOptionPane.showInputDialog(this,"The page is < 0.Add the duration of the audiobook in min: ",JOptionPane.PLAIN_MESSAGE);
+                int duration=Math.max(10,2 * title.length());//10 perc ,vagy a cim hosszanak 2x,ketszerese
+                if(durationStr!=null && !durationStr.trim().isEmpty()){
+                    try{
+                       int parsedDuration=Integer.parseInt(durationStr.trim());
+                        if(parsedDuration>0){
+                            duration=parsedDuration;
+                        }
+                        else{
+                            JOptionPane.showMessageDialog(this,"Not a positive number.Using default duration: "+duration+"min");
+                        }
+                    }
+                    catch(NumberFormatException e){
+                        JOptionPane.showMessageDialog(this,"Not a positive number.Using default duration: "+duration+"min");
+                    }
+                }
+                mediaItem=new AudioBook(title,author,publicationYear,ISBN,duration);
+            }
+            //ha van oldalszam akkor Book
+            else if(page>0){ 
               mediaItem=new Book(title,author,publicationYear,ISBN,page);
             }
-            else{ //ha az oldalszam=0; akkor EBook
+            //ha az oldalszam=0; akkor EBook
+            else{ 
                String sizeStr=JOptionPane.showInputDialog(this, "The page is 0.Add the size of Ebook(MB): ",JOptionPane.PLAIN_MESSAGE);
                int size=Math.max(10, 10 * title.length());
                if(sizeStr!=null && sizeStr.trim().isEmpty()){
@@ -573,6 +597,9 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             case "Author: Leiner Laura":
                 url=GOOGLE_BOOKS_BASE_URL + "inauthor:Leiner+Laura&maxResults=" + MAX_RESULTS;
                 break;
+            case "Category: AudioBook":
+                url=GOOGLE_BOOKS_BASE_URL + "audiobook+OR+listen&maxResults=" + MAX_RESULTS;
+                break;
             default:
                 JOptionPane.showMessageDialog(this,"Choose another category.");
                 break;
@@ -727,6 +754,17 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                     }
                   sb.append("\nPrice:\n ").append(String.format("%.2f", book.calculatePrice()));
                 }
+                else if(book instanceof AudioBook){
+                    AudioBook selectedAudioBook= (AudioBook) book;
+                    int duration=selectedAudioBook.getDurationInMinutes();
+                    if(duration>0){
+                        sb.append("Duration: ").append(duration).append("min");
+                    }
+                    else{
+                        sb.append("\nDuration: 0 min");
+                    }
+                   sb.append("\nPrice:\n ").append(String.format("%.2f",book.calculatePrice()));
+                }
                 
                 sb.append("\nStatus:\n").append(item.getStatus());
                 
@@ -770,6 +808,9 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             }
             else if(book instanceof EBook){
                 itemJson.put("fileSizeMB", ((EBook) book).getFileSizeMB());
+            }
+            else if(book instanceof AudioBook){
+                itemJson.put("durationInMinutes",((AudioBook) book).getDurationInMinutes());
             }
             
             itemJson.put("rating", item.getRating());
@@ -834,12 +875,16 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 int publicationYear = itemJson.optInt("publicationYear", 0);
                 String ISBN = itemJson.optString("ISBN", "");
                 int page = itemJson.optInt("page", itemJson.optInt("pages", 0));
+                int duration=itemJson.optInt("durationInMinutes",0);
 
                 //Book book = new Book(title, author, publicationYear, ISBN, page);
                 
                 MediaItem book;
                 if(page>0){
                     book=new Book(title, author, publicationYear, ISBN, page);
+                }
+                else if(duration>0){
+                    book=new AudioBook(title, author, publicationYear, ISBN , duration);
                 }
                 else{
                   int fileSize=itemJson.optInt("fileSizeMB",10);
@@ -932,6 +977,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 
                 bookList.clear();
                 eBookList.clear();
+                audioBookList.clear();
                 
                 if(bookEntries == null){
                     resultText = "No books was found for this category";
@@ -980,7 +1026,12 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                         }
                         
                         MediaItem mediaItem;
-                        if(page>0){
+                        if(urlString.contains("audiobook+OR+listen")){
+                            int durationMin=Math.max(10, title.length() * 2);
+                            mediaItem=new Book(title,author,publicationYear,ISBN, durationMin);
+                            audioBookList.add(mediaItem);
+                        }
+                        else if(page>0){
                             mediaItem=new Book(title,author,publicationYear,ISBN,page);
                             bookList.add(mediaItem);
                         }
@@ -1022,8 +1073,24 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                               .append("\n");
                         }
                     }
-                    
-                    if(bookList.isEmpty() && eBookList.isEmpty()){
+                    if(!audioBookList.isEmpty()){
+                      if(!bookList.isEmpty() || eBookList.isEmpty()){
+                          sb.append("\n");
+                      }
+                    }
+                    sb.append("---AUDIO BOOKS\n---");
+                    for(MediaItem book : audioBookList){
+                       AudioBook selectedAudioBook=(AudioBook) book;
+                       sb.append("Audio book: ")
+                         .append(book.getTitle())
+                         .append(" by ").append(selectedAudioBook.getAuthor())
+                         .append(" (").append(selectedAudioBook.getPublicationYear()).append(")")
+                         .append(", ISBN: ").append(selectedAudioBook.getISBN())
+                         .append(", Duration: ").append(selectedAudioBook.getDurationInMinutes()).append(" min")
+                         .append("\n");  
+                    }
+                  
+                    if(bookList.isEmpty() && eBookList.isEmpty() && audioBookList.isEmpty()){
                         sb.append("No books loaded from API");
                     }
                     resultText = sb.toString();
