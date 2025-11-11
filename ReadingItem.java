@@ -102,4 +102,5 @@ public class ReadingItem {
         }
         return 0;
     }
+    
 }

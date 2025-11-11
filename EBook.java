@@ -31,14 +31,6 @@ public  class EBook extends MediaItem {
     @Override
     public String toString() {
         return getSummaryInfo() + "file size: "+ fileSizeMB + "MB";
-    }
-
-   
-    
-
-    
-   
-   
-    
+    } 
     
 }

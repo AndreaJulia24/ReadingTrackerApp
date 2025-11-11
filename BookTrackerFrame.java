@@ -35,6 +35,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BookTrackerFrame.class.getName());
     private List<MediaItem>bookList=new ArrayList<>();
     private List<MediaItem>eBookList=new ArrayList<>();
+    private List<MediaItem>audioBookList=new ArrayList<>();
     private User currentUser;
     /**
      * Creates new form BookTrackerFrame
@@ -52,6 +53,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         CombCategory.addItem("Author: Colleen Hoover");
         CombCategory.addItem("Author: Ana Huang");
         CombCategory.addItem("Author: Leiner Laura");
+        CombCategory.addItem("Category: AudioBook");
     }
     
     private void initializeUser(){
@@ -283,7 +285,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(12, 12, 12)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(LoadButton)
                                     .addComponent(txtSelectBookTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createSequentialGroup()
@@ -314,11 +316,33 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             int page=Integer.parseInt(jTxtPage.getText().trim());
             MediaItem mediaItem;
             
-            //polimorfikus letrehozas-oroklodes
-            if(page>0){ //ha van oldalszam akkor Book
+            //polimorfikus letrehozas-oroklodes 
+            //Ha az oldalszam kevesebb akkor AudioBook 
+            if(page<0){
+                String durationStr=JOptionPane.showInputDialog(this,"The page is < 0.Add the duration of the audiobook in min: ",JOptionPane.PLAIN_MESSAGE);
+                int duration=Math.max(10,2 * title.length());//10 perc ,vagy a cim hosszanak 2x,ketszerese
+                if(durationStr!=null && !durationStr.trim().isEmpty()){
+                    try{
+                       int parsedDuration=Integer.parseInt(durationStr.trim());
+                        if(parsedDuration>0){
+                            duration=parsedDuration;
+                        }
+                        else{
+                            JOptionPane.showMessageDialog(this,"Not a positive number.Using default duration: "+duration+"min");
+                        }
+                    }
+                    catch(NumberFormatException e){
+                        JOptionPane.showMessageDialog(this,"Not a positive number.Using default duration: "+duration+"min");
+                    }
+                }
+                mediaItem=new AudioBook(title,author,publicationYear,ISBN,duration);
+            }
+            //ha van oldalszam akkor Book
+            else if(page>0){ 
               mediaItem=new Book(title,author,publicationYear,ISBN,page);
             }
-            else{ //ha az oldalszam=0; akkor EBook
+            //ha az oldalszam=0; akkor EBook
+            else{ 
                String sizeStr=JOptionPane.showInputDialog(this, "The page is 0.Add the size of Ebook(MB): ",JOptionPane.PLAIN_MESSAGE);
                int size=Math.max(10, 10 * title.length());
                if(sizeStr!=null && sizeStr.trim().isEmpty()){
@@ -547,31 +571,34 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         if(selected != null)
             switch (selected) {
             case "Fantasy":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:Fantasy&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Fantasy&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=en";
                 break;
             case "Romance":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:Romance&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Romance&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=en";
                 break;
             case "Thriller":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:Thriller&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Thriller&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=en";
                 break;
             case "Young Adult (EN)":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:fiction+romance&langRestrict=en&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "subject:fiction+romance&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=en";
                 break;
             case "Young Adult (HU)":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:fiction=thriller&langRestrict=hu&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "subject:fiction=thriller&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=hu";
                 break;
             case "Author: Rebecca Yarros":
-                 url=GOOGLE_BOOKS_BASE_URL + "inauthor:Rebecca+Yarros&maxResults=" + MAX_RESULTS; 
+                 url=GOOGLE_BOOKS_BASE_URL + "inauthor:Rebecca+Yarros&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=en"; 
                 break;
             case "Author: Colleen Hoover":
-                url=GOOGLE_BOOKS_BASE_URL + "inauthor:Colleen+Hoover&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "inauthor:Colleen+Hoover&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=en";
                 break;
             case "Author: Ana Huang":
-                url=GOOGLE_BOOKS_BASE_URL + "inauthor:Ana+Huang&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "inauthor:Ana+Huang&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=en";
                 break;
             case "Author: Leiner Laura":
-                url=GOOGLE_BOOKS_BASE_URL + "inauthor:Leiner+Laura&maxResults=" + MAX_RESULTS;
+                url=GOOGLE_BOOKS_BASE_URL + "inauthor:Leiner+Laura&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=hu";
+                break;
+            case "Category: AudioBook":
+                url=GOOGLE_BOOKS_BASE_URL + "subject:romance+fiction&audiobook&maxResults" + MAX_RESULTS + "&orderBy=newest&langRestrict=en";
                 break;
             default:
                 JOptionPane.showMessageDialog(this,"Choose another category.");
@@ -727,6 +754,17 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                     }
                   sb.append("\nPrice:\n ").append(String.format("%.2f", book.calculatePrice()));
                 }
+                else if(book instanceof AudioBook){
+                    AudioBook selectedAudioBook= (AudioBook) book;
+                    int duration=selectedAudioBook.getDurationInMinutes();
+                    if(duration>0){
+                        sb.append("Duration: ").append(duration).append("min");
+                    }
+                    else{
+                        sb.append("\nDuration: 0 min");
+                    }
+                   sb.append("\nPrice:\n ").append(String.format("%.2f",book.calculatePrice()));
+                }
                 
                 sb.append("\nStatus:\n").append(item.getStatus());
                 
@@ -770,6 +808,9 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             }
             else if(book instanceof EBook){
                 itemJson.put("fileSizeMB", ((EBook) book).getFileSizeMB());
+            }
+            else if(book instanceof AudioBook){
+                itemJson.put("durationInMinutes",((AudioBook) book).getDurationInMinutes());
             }
             
             itemJson.put("rating", item.getRating());
@@ -834,12 +875,16 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 int publicationYear = itemJson.optInt("publicationYear", 0);
                 String ISBN = itemJson.optString("ISBN", "");
                 int page = itemJson.optInt("page", itemJson.optInt("pages", 0));
+                int duration=itemJson.optInt("durationInMinutes",0);
 
                 //Book book = new Book(title, author, publicationYear, ISBN, page);
                 
                 MediaItem book;
                 if(page>0){
                     book=new Book(title, author, publicationYear, ISBN, page);
+                }
+                else if(duration>0){
+                    book=new AudioBook(title, author, publicationYear, ISBN , duration);
                 }
                 else{
                   int fileSize=itemJson.optInt("fileSizeMB",10);
@@ -909,130 +954,167 @@ public class BookTrackerFrame extends javax.swing.JFrame {
     @Override
     public void run(){
         String resultText = "Error loading books."; // Alapértelmezett hibaüzenet
+        final int MAX_RESULTS_PER_PAGE = 40; 
+        final int TOTAL_PAGES_TO_FETCH = 5; //megprobal 5 oldalt-200 talalalot
             
-            try {
-                //A FETCHBOOKSFROMAPI logika
-                URL url=new URL(urlString);
-                HttpURLConnection conn=(HttpURLConnection) url.openConnection();
+           try {
+            // A kereso URL tiszta alapjanak kinyerese (maxResults nelkul)
+            String baseUrl = urlString.substring(0, urlString.indexOf("&maxResults")); 
+            
+            bookList.clear();
+            eBookList.clear();
+            audioBookList.clear();
+            
+            boolean foundAnyBook = false; // ellenorzes hogy talalt-e konyvet vagy sem
+            
+            //Lapozasi Ciklus (Pagination)
+            for (int i = 0; i < TOTAL_PAGES_TO_FETCH; i++) {
+                int startIndex = i * MAX_RESULTS_PER_PAGE;
+                
+               
+                String paginatedUrl = baseUrl + "&maxResults=" + MAX_RESULTS_PER_PAGE + "&startIndex=" + startIndex;
+                
+                // kapcsolodas az URL-hez
+                URL url = new URL(paginatedUrl);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 
-                BufferedReader reader= new BufferedReader(new InputStreamReader(conn.getInputStream(),"UTF-8"));
-                StringBuilder response=new StringBuilder();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+                StringBuilder response = new StringBuilder();
                 String line;
-                
-                while ((line = reader.readLine()) != null) {
-                     response.append(line);
-                     }    
-                
+                while ((line=reader.readLine())!=null) {
+                    response.append(line);
+                }
                 reader.close();
-            
-                // --- ADATFELDOLGOZAS ---
+                
+                // JSON ADATFELDOLGOZAS
                 JSONObject json = new JSONObject(response.toString());
-                JSONArray bookEntries =json.optJSONArray("items");
+                JSONArray bookEntries = json.optJSONArray("items");
                 
-                bookList.clear();
-                eBookList.clear();
+                if (bookEntries==null) {
+                    break;//ha nincs tobb talalat, fejezzuk be a lapozast
+                }                
                 
-                if(bookEntries == null){
-                    resultText = "No books was found for this category";
-                } else {
+                foundAnyBook = true;
+                
+                // KONYVEK FELDOLGOZASA-BOOK, E-BOOK, AUDIO BOOK
+                for (int j = 0; j < bookEntries.length(); ++j) {
+                    JSONObject itemObj = bookEntries.getJSONObject(j);
+                    
+                    JSONObject volumeInfo = itemObj.optJSONObject("volumeInfo");
+                    if (volumeInfo==null) continue;
 
-                    //JSON feldolgozas 
-                    for(int i=0;i<bookEntries.length();++i){
-                        JSONObject itemObj=bookEntries.getJSONObject(i);
-                        
-                        JSONObject volumeInfo = itemObj.optJSONObject("volumeInfo");
-                        if (volumeInfo == null) continue;
-                        
-                        String title=volumeInfo.optString("title", "unknown Title");
-                        String author="Unknown Author";
-                        
-                        JSONArray authors=volumeInfo.optJSONArray("authors");
-                        if(authors != null && authors.length()>0){ 
-                             author=authors.getString(0);
+                    String title=volumeInfo.optString("title", "unknown Title");
+                    String author="Unknown Author";
+                    JSONArray authors=volumeInfo.optJSONArray("authors");
+                    if (authors != null && authors.length() > 0) {
+                        author=authors.getString(0);
+                    }
+
+                    int publicationYear=0;
+                    String publishedDate=volumeInfo.optString("publishedDate", "");
+                    if (!publishedDate.isEmpty()) {
+                        try {
+                            String yearStr=publishedDate.substring(0, Math.min(publishedDate.length(), 4));
+                            publicationYear=Integer.parseInt(yearStr);
+                        } catch (NumberFormatException e) {
+                            publicationYear=0;
                         }
-                        
-                        int publicationYear = 0;
-                        String publishedDate=volumeInfo.optString("publishedDate","");
-                        
-                        if(!publishedDate.isEmpty()){
-                           try{
-                               String yearStr=publishedDate.substring(0,Math.min(publishedDate.length(),4 ));
-                               publicationYear=Integer.parseInt(yearStr);
-                           }
-                           catch(NumberFormatException e){
-                               publicationYear=0;
-                           }
-                        }
-                        
-                        int page=volumeInfo.optInt("pageCount",0);
-                        String ISBN= "N/A";
-                        JSONArray identifiers=volumeInfo.optJSONArray("industryIdentifiers");
-                        if(identifiers!=null){
-                            for(int j=0;j<identifiers.length();++j){
-                                JSONObject identifier=identifiers.getJSONObject(j);
-                                String type= identifier.optString("type");
-                                if(type.equals("ISBN_13")){
-                                    ISBN=identifier.optString("identifier");
-                                    break;
-                                }
+                    }
+
+                    int page=volumeInfo.optInt("pageCount", 0);
+                    String ISBN="N/A";
+                    JSONArray identifiers=volumeInfo.optJSONArray("industryIdentifiers");
+                    if (identifiers != null) {
+                        for (int k=0;k<identifiers.length();++k) {
+                            JSONObject identifier=identifiers.getJSONObject(k);
+                            String type=identifier.optString("type");
+                            if (type.equals("ISBN_13")) {
+                                ISBN=identifier.optString("identifier");
+                                break;
                             }
                         }
-                        
-                        MediaItem mediaItem;
-                        if(page>0){
-                            mediaItem=new Book(title,author,publicationYear,ISBN,page);
+                    }
+     
+                    MediaItem mediaItem;
+                    
+                    if (urlString.contains("audiobook+OR+listen")) {
+                        int durationMin = Math.max(10, title.length() * 2);
+                        mediaItem = new AudioBook(title, author, publicationYear, ISBN, durationMin);
+                        if(!audioBookList.contains(mediaItem)){
+                            audioBookList.add(mediaItem);
+                        }
+                    } else if (page > 0) {
+                        mediaItem = new Book(title, author, publicationYear, ISBN, page);
+                        if(!bookList.contains(mediaItem)){
                             bookList.add(mediaItem);
                         }
-                        else{
-                            int defaultSizeMB=Math.max(10, title.length() * 5);
-                            mediaItem=new EBook(title,author,publicationYear,ISBN,defaultSizeMB);
-                            eBookList.add(mediaItem);
+                    } else {
+                        // Alapértelmezett Ebook
+                        int defaultSizeMB = Math.max(10, title.length() * 5);
+                        mediaItem = new EBook(title, author, publicationYear, ISBN, defaultSizeMB);
+                        if(!eBookList.contains(mediaItem)){
+                          eBookList.add(mediaItem);
                         }
                     }
-                    
-                    // az updateOutputTxt logikaja
-                    StringBuilder sb=new StringBuilder();
-                    if(!bookList.isEmpty()){
-                        sb.append("--BOOKS\n--");
-                        for(MediaItem book : bookList){
-                           Book selectedBook = (Book) book;
-                            sb.append(book.getTitle())
-                              .append(" by ").append(selectedBook.getAuthor())
-                              .append(" (").append(selectedBook.getPublicationYear()).append(")")
-                              .append(", ISBN: ").append(selectedBook.getISBN())
-                              .append(", ").append(selectedBook.getPage()).append("pages")
-                              .append("\n"); 
-                        }
-                    }
-                    
-                    if(!eBookList.isEmpty()){
-                       if(!bookList.isEmpty()){
-                           sb.append("\n");
-                       }
-                      sb.append("--E-BOOKS\n--");
-                      for(MediaItem book : eBookList){
-                            EBook selectedEBook = (EBook) book;
-                            sb.append("E-Book: ")
-                              .append(book.getTitle())
-                              .append(" by ").append(selectedEBook.getAuthor())
-                              .append(" (").append(selectedEBook.getPublicationYear()).append(")")
-                              .append(", ISBN: ").append(selectedEBook.getISBN())
-                              .append(", Size: ").append(selectedEBook.getFileSizeMB()).append(" MB")
-                              .append("\n");
-                        }
-                    }
-                    
-                    if(bookList.isEmpty() && eBookList.isEmpty()){
-                        sb.append("No books loaded from API");
-                    }
-                    resultText = sb.toString();
-                }
-
-            } catch(Exception e) {
-                logger.log(Level.WARNING, "Error loading books in thread", e);
-                resultText = "Error loading books: " + e.getMessage();
+                } //feldolgozas vege
+            } //lapozasi ciklus vege
+         
+            //updateOutputTxt logikaja
+            StringBuilder sb = new StringBuilder();
+            
+            if (!bookList.isEmpty()) {
+                sb.append("BOOKS\n:");
             }
+              for (MediaItem book : bookList) {
+                    Book selectedBook = (Book) book;
+                    sb.append(book.getTitle())
+                      .append(" by ").append(selectedBook.getAuthor())
+                      .append(" (").append(selectedBook.getPublicationYear()).append(")")
+                      .append(", ISBN: ").append(selectedBook.getISBN())
+                      .append(", ").append(selectedBook.getPage()).append("pages")
+                      .append("\n");
+              }
+            
+            if (!eBookList.isEmpty()) {
+                if (!bookList.isEmpty()){
+                    sb.append("\n");
+                }
+                for (MediaItem book : eBookList) {
+                    EBook selectedEBook = (EBook) book;
+                    sb.append("E-Book: ").append(book.getTitle())
+                      .append(" by ").append(selectedEBook.getAuthor())
+                      .append(" (").append(selectedEBook.getPublicationYear()).append(")")
+                      .append(", ISBN: ").append(selectedEBook.getISBN())
+                      .append(", Size: ").append(selectedEBook.getFileSizeMB()).append(" MB")
+                      .append("\n");
+                }
+            }
+            
+            if (!audioBookList.isEmpty()) {
+                if (!bookList.isEmpty() || !eBookList.isEmpty()) { sb.append("\n"); }
+                for (MediaItem book : audioBookList) {
+                    AudioBook selectedAudioBook = (AudioBook) book;
+                    sb.append("Audio book: ").append(book.getTitle())
+                      .append(" by ").append(selectedAudioBook.getAuthor())
+                      .append(" (").append(selectedAudioBook.getPublicationYear()).append(")")
+                      .append(", ISBN: ").append(selectedAudioBook.getISBN())
+                      .append(", Duration: ").append(selectedAudioBook.getDurationInMinutes()).append(" min")
+                      .append("\n");
+                }
+            }
+            
+            if (!foundAnyBook) {
+                resultText = "No books was found for this category";
+            } else {
+                resultText = sb.toString();
+            }
+
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Error loading books in thread", e);
+            resultText="Error loading books: "+ e.getMessage();
+        }
+           
             
             final String finalResultText = resultText;
             

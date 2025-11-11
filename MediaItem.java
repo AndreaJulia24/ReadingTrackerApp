@@ -36,6 +36,27 @@ public abstract class MediaItem implements Publication{
     public String getISBN() {
         return ISBN;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this==obj){ //Ugyanaz a memoriahely-e?
+            return true;
+        }
+        
+        //Ervenyes tipus-e a MediaItem 
+        if(obj==null || (obj instanceof MediaItem)){
+            return false; 
+        }
+        //konvertalas
+        MediaItem other= (MediaItem) obj;
+        
+        //kezeljuk a hianyo azonositot, ISBN-t
+        if(this.ISBN==null || other.ISBN==null || "N/A".equals(this.ISBN) || "N/A".equals(other.ISBN)){
+            return false;
+        }
+        return this.ISBN.equals(other.ISBN); //ertekek osszehasonlitasa az ISBN azonosito szerint , bemutatando logika
+    }
+    
     
     
     //absztrakt metodus- a leszarmazottak majd definialjak a calculatePrice-t
@@ -46,4 +67,5 @@ public abstract class MediaItem implements Publication{
     public String getSummaryInfo(){
         return this.title + "by" +this.author + "( " + this.publicationYear + ")";
     }
+    
 }
