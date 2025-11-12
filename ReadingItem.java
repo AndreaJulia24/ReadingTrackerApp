@@ -26,13 +26,14 @@ public class ReadingItem {
     
     public ReadingItem(){};
 
-    public ReadingItem(MediaItem book, int rating, String review, LocalDate startDate, LocalDate endDate, Status status) {
+    public ReadingItem(MediaItem book, int rating, String review, LocalDate startDate, LocalDate endDate, Status status) throws InvalidRatingException{
         this.book = book;
         this.rating = rating;
         this.review =review;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
+        setRating(rating);
     }
 
     public MediaItem getBook() {
@@ -59,12 +60,12 @@ public class ReadingItem {
         return status;
     }
 
-    public void setRating(int rating) {
+    public void setRating(int rating) throws InvalidRatingException {
         if(rating>=1 && rating<=5){
             this.rating=rating;
         }
         else{
-            System.out.println("Does not exist.The rating is only between 1 and 5.");
+           throw new InvalidRatingException("The rating must be between 1 and 5");
         }
     }
 

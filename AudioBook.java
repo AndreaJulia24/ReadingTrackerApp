@@ -10,11 +10,11 @@ package com.mycompany.booktrackerapp;
  */
 public class AudioBook extends MediaItem {
     
-    private int durationInMinutes;
+    private static int durationInMinutes;
 
     public AudioBook( String title, String author, int publicationYear, String ISBN,int durationInMinutes) {
         super(title, author, publicationYear, ISBN);
-        this.durationInMinutes = durationInMinutes;
+        AudioBook.durationInMinutes = durationInMinutes;
     }
 
     public int getDurationInMinutes() {
@@ -24,7 +24,7 @@ public class AudioBook extends MediaItem {
 
     @Override
     public double calculatePrice() {
-       return (double) this.durationInMinutes * 0.1; //arszamitas: 1 perc= 0.1 egyseg ar
+       return (double) AudioBook.durationInMinutes * 0.1; //arszamitas: 1 perc= 0.1 egyseg ar
     }
 
     @Override

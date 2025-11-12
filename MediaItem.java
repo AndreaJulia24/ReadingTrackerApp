@@ -9,10 +9,10 @@ package com.mycompany.booktrackerapp;
  * @author Andi
  */
 public abstract class MediaItem implements Publication{
-    private String title;
-    private String author;
-    private int publicationYear;
-    private String ISBN; //egyedi azonosito
+    protected String title;
+    protected String author;
+    protected int publicationYear;
+    protected String ISBN; //egyedi azonosito
 
     public MediaItem(String title, String author, int publicationYear, String ISBN) {
         this.title = title;
@@ -56,7 +56,6 @@ public abstract class MediaItem implements Publication{
         }
         return this.ISBN.equals(other.ISBN); //ertekek osszehasonlitasa az ISBN azonosito szerint , bemutatando logika
     }
-    
     
     
     //absztrakt metodus- a leszarmazottak majd definialjak a calculatePrice-t

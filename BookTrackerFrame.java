@@ -411,6 +411,9 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         catch(IllegalArgumentException e){
              JOptionPane.showMessageDialog(this, "Invalid status.Please use: READ,IN_PROGRESS,WISHLIST");
         }
+        catch(InvalidRatingException e){
+            JOptionPane.showMessageDialog(this, "Invalid rating.The rating must be between 1 and 5!");
+        }
     }//GEN-LAST:event_ButtonAddBookActionPerformed
   /*  private void fetchBooksFromAPI(String urlString){
         
@@ -742,6 +745,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                     else{
                         sb.append("\nPages: 0");
                     }
+                    sb.append("\nPrice:\n ").append(String.format("%.2f", book.calculatePrice()));
                 }
                 else if(book instanceof EBook){
                     EBook selectedEBook= (EBook) book;
@@ -955,7 +959,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
     public void run(){
         String resultText = "Error loading books."; // Alapértelmezett hibaüzenet
         final int MAX_RESULTS_PER_PAGE = 40; 
-        final int TOTAL_PAGES_TO_FETCH = 5; //megprobal 5 oldalt-200 talalalot
+        final int TOTAL_PAGES_TO_FETCH = 4; //megprobal 4 oldalt-160 talalalot
             
            try {
             // A kereso URL tiszta alapjanak kinyerese (maxResults nelkul)
