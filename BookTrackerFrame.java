@@ -398,12 +398,6 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             
             UpdateReadingList();
             
-            // Törlés
-            txtTitle.setText("");
-            JtxtAuthor.setText("");
-            jTxtPublication.setText("");
-            jTxtISBN.setText("");
-            jTxtPage.setText("");
         }
         catch(NumberFormatException e){
           JOptionPane.showMessageDialog(this, "The year, page, rating must be integer.");
@@ -413,6 +407,14 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         }
         catch(InvalidRatingException e){
             JOptionPane.showMessageDialog(this, "Invalid rating.The rating must be between 1 and 5!");
+        }
+        finally{
+            // Törlés
+            txtTitle.setText("");
+            JtxtAuthor.setText("");
+            jTxtPublication.setText("");
+            jTxtISBN.setText("");
+            jTxtPage.setText("");
         }
     }//GEN-LAST:event_ButtonAddBookActionPerformed
   /*  private void fetchBooksFromAPI(String urlString){
@@ -644,6 +646,10 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             MediaItem selectedBook = null;
            
             String searchTitle = enteredTitle.trim();
+            if(searchTitle.startsWith("E-book: ")){
+                searchTitle=searchTitle.substring("E-book: ".length());
+            }
+          
 
             for (MediaItem book : bookList) {
                 if (book.getTitle().contains(searchTitle)) {
@@ -653,9 +659,17 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             }
             
             if (selectedBook == null) {
-              for(MediaItem book : eBookList){
-                  if(book.getTitle().contains(searchTitle)){
-                      selectedBook=book;
+              for(MediaItem ebook : eBookList){
+                  if(ebook.getTitle().contains(searchTitle)){
+                      selectedBook=ebook;
+                  }
+              }
+            }
+            
+            if (selectedBook == null) {
+              for(MediaItem audioBook : audioBookList){
+                  if(audioBook.getTitle().contains(searchTitle)){
+                      selectedBook=audioBook;
                   }
               }
            }
@@ -792,29 +806,31 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         //itt azert kell az egesz mappa mert maskepp nem fogadja el, tolti be 
         final String filename = "src/main/java/com/mycompany/booktrackerapp/myBooks.json";
         JSONArray readingListJson = new JSONArray();
-        
-        JSONObject mainJson = new JSONObject();
-        mainJson.put("username", currentUser.getusername());
-        mainJson.put("email", currentUser.getEmail());
 
         for(ReadingItem item : currentUser.getReadingList()){
             MediaItem book = item.getBook();
             if(book == null) continue;
 
             JSONObject itemJson = new JSONObject();
+            itemJson.put("username", currentUser.getusername());
+            itemJson.put("email",currentUser.getEmail());
             itemJson.put("title", book.getTitle());
             itemJson.put("author", book.getAuthor());
             itemJson.put("publicationYear", book.getPublicationYear());
             itemJson.put("ISBN", book.getISBN());
+           
             
             if(book instanceof Book){
                 itemJson.put("page", ((Book) book).getPage());
+                 itemJson.put("price", book.calculatePrice());
             }
             else if(book instanceof EBook){
                 itemJson.put("fileSizeMB", ((EBook) book).getFileSizeMB());
+                itemJson.put("price", book.calculatePrice());
             }
             else if(book instanceof AudioBook){
                 itemJson.put("durationInMinutes",((AudioBook) book).getDurationInMinutes());
+                 itemJson.put("price", book.calculatePrice());
             }
             
             itemJson.put("rating", item.getRating());
@@ -909,9 +925,14 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 catch(IllegalArgumentException ex){
                     status = ReadingItem.Status.WISHLIST;
                 }
-
+                try{
                 ReadingItem item = new ReadingItem(book, rating, review, startDate, endDate, status);
                 currentUser.addReadingItem(item);
+                }
+                catch(InvalidRatingException e){
+                    logger.log(Level.WARNING,"Invalid rating",e);
+                    
+                }
             }
 
             UpdateReadingList();

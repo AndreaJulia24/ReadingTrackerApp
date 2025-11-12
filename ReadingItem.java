@@ -61,7 +61,7 @@ public class ReadingItem {
     }
 
     public void setRating(int rating) throws InvalidRatingException {
-        if(rating>=1 && rating<=5){
+        if(rating>=1 && rating<=5 || rating==0){
             this.rating=rating;
         }
         else{

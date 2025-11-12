@@ -10,7 +10,7 @@ package com.mycompany.booktrackerapp;
  */
 public class Book extends ReadingMaterial {
    
-    private static int page;
+    private int page;
     
     public Book(){
         super("","",0,"");
@@ -18,7 +18,7 @@ public class Book extends ReadingMaterial {
 
     public Book(String title, String author,int publicationYear, String ISBN, int page) {
         super(title,author,publicationYear,ISBN);
-        Book.page=page;
+        this.page=page;
     }
 
     public int getPage() {
@@ -28,7 +28,7 @@ public class Book extends ReadingMaterial {
     //interfacebol overriding
     @Override
     public double calculatePrice(){
-        return (double) Book.page /5.0; //arszamitas pl. 5 oldal = 1 egyseg ar
+        return (double) this.page /5.0; //arszamitas pl. 5 oldal = 1 egyseg ar
     }
     
     //ket toString tulterhelese -overloading

@@ -10,11 +10,11 @@ package com.mycompany.booktrackerapp;
  */
 public  class EBook extends ReadingMaterial {
     
-   private static int fileSizeMB;
+   private  int fileSizeMB;
 
    public EBook(String title,String author, int publicationYear,String ISBN, int fileSizeMB){
        super(title,author,publicationYear,ISBN);
-       EBook.fileSizeMB=fileSizeMB;
+       this.fileSizeMB=fileSizeMB;
    }
    
     public int getFileSizeMB() {
@@ -24,7 +24,7 @@ public  class EBook extends ReadingMaterial {
     //interfacebol a metodus, overriding
     @Override
     public double calculatePrice(){
-        return (double) EBook.fileSizeMB * 0.5; //arszamitas pl. 1 MB= 0.5 egyseg ar
+        return (double) this.fileSizeMB * 0.5; //arszamitas pl. 1 MB= 0.5 egyseg ar
     }
 
     
