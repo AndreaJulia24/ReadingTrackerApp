@@ -193,5 +193,18 @@
         "rating": 0,
         "review": "never heard of it",
         "status": "WISHLIST"
+    },
+    {
+        "username": "Andi",
+        "email": "czellecza@yahoo.com",
+        "title": "The Legacy",
+        "author": "Linda Lael Miller",
+        "publicationYear": 1994,
+        "ISBN": "9780671797928",
+        "page": 356,
+        "price": 71.2,
+        "rating": 0,
+        "review": "-1",
+        "status": "WISHLIST"
     }
 ]
