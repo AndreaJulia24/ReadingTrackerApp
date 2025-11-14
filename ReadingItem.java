@@ -21,7 +21,9 @@ public class ReadingItem {
     public enum Status{
         READ,
         IN_PROGRESS,
-        WISHLIST
+        WISHLIST,
+        LISTENED,
+        WISHLIST_LISTEN
     }
     
     public ReadingItem(){};
@@ -75,12 +77,12 @@ public class ReadingItem {
         if (newStatus == Status.IN_PROGRESS && this.status != Status.IN_PROGRESS) {
             this.startDate = LocalDate.now();
             this.endDate = null;
-        } else if (newStatus == Status.READ && this.status != Status.READ) {
+        } else if (newStatus == Status.READ && this.status != Status.READ || newStatus ==Status.LISTENED && this.status != Status.LISTENED) {
             if (this.startDate == null) {
                 this.startDate = LocalDate.now();
             }
             this.endDate = LocalDate.now();
-        } else if (newStatus == Status.WISHLIST) {
+        } else if (newStatus == Status.WISHLIST || newStatus == Status.WISHLIST_LISTEN) {
             this.startDate = null;
             this.endDate = null;
         }

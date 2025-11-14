@@ -21,8 +21,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Locale;
 import javax.swing.SwingUtilities;
-
 import java.lang.Runnable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import javax.swing.SwingWorker;
 
@@ -37,6 +38,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
     private List<MediaItem>eBookList=new ArrayList<>();
     private List<MediaItem>audioBookList=new ArrayList<>();
     private User currentUser;
+    private final Map<String,String>apiCache=new HashMap<String,String>();
     /**
      * Creates new form BookTrackerFrame
      */
@@ -53,7 +55,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         CombCategory.addItem("Author: Colleen Hoover");
         CombCategory.addItem("Author: Ana Huang");
         CombCategory.addItem("Author: Leiner Laura");
-        CombCategory.addItem("Category: AudioBook");
+        //CombCategory.addItem("Audio book: romance");
     }
     
     private void initializeUser(){
@@ -366,7 +368,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, mediaItem.getTitle() + "price: " +mediaItem.calculatePrice() + JOptionPane.INFORMATION_MESSAGE);
             
             //beolvassuk az olvasasi adatokat-rating,status,review
-            String statusStr=JOptionPane.showInputDialog(this,"Enter your status(READ,IN_PROGRESS,WISHLIST): ",JOptionPane.PLAIN_MESSAGE);
+            String statusStr=JOptionPane.showInputDialog(this,"Enter your status(READ,LISTENED,IN_PROGRESS,WISHLIST,WISHLIST_LISTEN): ",JOptionPane.PLAIN_MESSAGE);
             String ratingStr = JOptionPane.showInputDialog(this, "Enter your rating(1-5): ",JOptionPane.PLAIN_MESSAGE);
             String review=JOptionPane.showInputDialog(this, "Enter your review: ",JOptionPane.PLAIN_MESSAGE);
             
@@ -403,7 +405,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
           JOptionPane.showMessageDialog(this, "The year, page, rating must be integer.");
         }
         catch(IllegalArgumentException e){
-             JOptionPane.showMessageDialog(this, "Invalid status.Please use: READ,IN_PROGRESS,WISHLIST");
+             JOptionPane.showMessageDialog(this, "Invalid status.Please use: READ,LISTENED,IN_PROGRESS,WISHLIST");
         }
         catch(InvalidRatingException e){
             JOptionPane.showMessageDialog(this, "Invalid rating.The rating must be between 1 and 5!");
@@ -572,6 +574,11 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Please select a category!");
         return;
        }
+       
+       if(apiCache.containsKey(selected)){
+           outputTxt.setText(apiCache.get(selected));
+           return;
+       }
         
         if(selected != null)
             switch (selected) {
@@ -588,7 +595,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 url=GOOGLE_BOOKS_BASE_URL + "subject:fiction+romance&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=en";
                 break;
             case "Young Adult (HU)":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:fiction=thriller&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=hu";
+                url=GOOGLE_BOOKS_BASE_URL + "subject:fiction=romance&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=hu";
                 break;
             case "Author: Rebecca Yarros":
                  url=GOOGLE_BOOKS_BASE_URL + "inauthor:Rebecca+Yarros&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=en"; 
@@ -602,9 +609,9 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             case "Author: Leiner Laura":
                 url=GOOGLE_BOOKS_BASE_URL + "inauthor:Leiner+Laura&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=hu";
                 break;
-            case "Category: AudioBook":
-                url=GOOGLE_BOOKS_BASE_URL + "subject:romance+fiction&audiobook&maxResults" + MAX_RESULTS + "&orderBy=newest&langRestrict=en";
-                break;
+            /*case "Audio book: romance":
+                url=GOOGLE_BOOKS_BASE_URL + "subject:Romance+audiobook&maxResults=" + MAX_RESULTS + "&orderBy=newest&langRestrict=en";
+                break; */
             default:
                 JOptionPane.showMessageDialog(this,"Choose another category.");
                 break;
@@ -618,13 +625,14 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         }*/
         
         final String finalUrl = url;
+        final String finalSelected=selected;
         
         if(finalUrl.startsWith("https://")){
             // UI visszajelzés a fő szálon
             outputTxt.setText("Loading books from API..."); 
             
             // ÚJ: Elindítja a hosszantartó munkát egy új Thread-en
-            new Thread(new BookSearchRunnable(finalUrl) {}).start();
+            new Thread(new BookSearchRunnable(finalUrl,finalSelected) {}).start();
             
         }
         else if(!finalUrl.isEmpty()){
@@ -649,10 +657,14 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             if(searchTitle.startsWith("E-book: ")){
                 searchTitle=searchTitle.substring("E-book: ".length());
             }
+            
+            if(searchTitle.startsWith("Audio book: ")){
+             searchTitle=searchTitle.substring("Audio book: ".length());
+            }
           
 
             for (MediaItem book : bookList) {
-                if (book.getTitle().contains(searchTitle)) {
+                if (searchTitle.contains(book.getTitle())) {
                     selectedBook = book;
                     break;
                 }
@@ -660,7 +672,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             
             if (selectedBook == null) {
               for(MediaItem ebook : eBookList){
-                  if(ebook.getTitle().contains(searchTitle)){
+                  if(searchTitle.contains(ebook.getTitle())){
                       selectedBook=ebook;
                   }
               }
@@ -668,7 +680,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             
             if (selectedBook == null) {
               for(MediaItem audioBook : audioBookList){
-                  if(audioBook.getTitle().contains(searchTitle)){
+                  if(searchTitle.contains(audioBook.getTitle())){
                       selectedBook=audioBook;
                   }
               }
@@ -680,7 +692,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             }
 
             // Status, Rating, Review adatainak beolvasasa
-            String statusStr = JOptionPane.showInputDialog(this, "Set the status for " + selectedBook.getTitle() + "READ,IN_PROGRESS,WISHLIST", JOptionPane.PLAIN_MESSAGE);
+            String statusStr = JOptionPane.showInputDialog(this, "Set the status for " + selectedBook.getTitle() + "READ,LISTENED,IN_PROGRESS,WISHLIST,WISHLIST_LISTEN", JOptionPane.PLAIN_MESSAGE);
             if (statusStr == null) return;
 
             String ratingStr = JOptionPane.showInputDialog(this, "Enter your rating (1-5): ", JOptionPane.PLAIN_MESSAGE);
@@ -702,14 +714,28 @@ public class BookTrackerFrame extends javax.swing.JFrame {
 
             ReadingItem.Status status=ReadingItem.Status.valueOf(statusStr.replace(" ", "_").toUpperCase());
             String opinion=(review!=null)?review.trim() : "";
+            
+            //ha a status listened vagy wishlist_listen akkor alakitsuk at AudioBookka
+            MediaItem finalMedia=selectedBook;
+            
+            if(status == ReadingItem.Status.LISTENED || status == ReadingItem.Status.WISHLIST_LISTEN && !(selectedBook instanceof AudioBook)){
+                int duration=Math.max(10,selectedBook.getTitle().length()*2);
+                finalMedia=new AudioBook(
+                            selectedBook.getTitle(),
+                            selectedBook.getAuthor(),
+                            selectedBook.getPublicationYear(),
+                            selectedBook.getISBN(),
+                            duration    
+                );
+            }
 
-            ReadingItem item=new ReadingItem(selectedBook, rating, opinion, null, null, status);
+            ReadingItem item=new ReadingItem(finalMedia, rating, opinion, null, null, status);
             item.setStatus(status);
             currentUser.addReadingItem(item);
 
             saveDataInJSON(); // MENTÉS
 
-            JOptionPane.showMessageDialog(this,selectedBook.getTitle() + " added to your list as " + status + ".", "Success", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this,finalMedia.getTitle() + " added to your list as " + status + ".", "Success", JOptionPane.INFORMATION_MESSAGE);
 
             //UpdateReadingList();
         }
@@ -776,7 +802,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                     AudioBook selectedAudioBook= (AudioBook) book;
                     int duration=selectedAudioBook.getDurationInMinutes();
                     if(duration>0){
-                        sb.append("Duration: ").append(duration).append("min");
+                        sb.append("\nDuration: ").append(duration).append("min");
                     }
                     else{
                         sb.append("\nDuration: 0 min");
@@ -899,18 +925,6 @@ public class BookTrackerFrame extends javax.swing.JFrame {
 
                 //Book book = new Book(title, author, publicationYear, ISBN, page);
                 
-                MediaItem book;
-                if(page>0){
-                    book=new Book(title, author, publicationYear, ISBN, page);
-                }
-                else if(duration>0){
-                    book=new AudioBook(title, author, publicationYear, ISBN , duration);
-                }
-                else{
-                  int fileSize=itemJson.optInt("fileSizeMB",10);
-                  book=new EBook(title, author, publicationYear, ISBN, fileSize);
-                }
-                
                 int rating = itemJson.optInt("rating", 0);
                 String review = itemJson.optString("review", "");
                 String statusStr = itemJson.optString("status", ReadingItem.Status.WISHLIST.name());
@@ -925,6 +939,21 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 catch(IllegalArgumentException ex){
                     status = ReadingItem.Status.WISHLIST;
                 }
+                
+                MediaItem book;
+                
+                if(page>0){
+                    book=new Book(title, author, publicationYear, ISBN, page);
+                }
+                else if(status == ReadingItem.Status.LISTENED || status == ReadingItem.Status.WISHLIST_LISTEN || duration>0){
+                    int finalDuration=itemJson.optInt("durationInMinutes",Math.max(10,title.length()*2));
+                    book=new AudioBook(title, author, publicationYear, ISBN , finalDuration);
+                }
+                else{
+                  int fileSize=itemJson.optInt("fileSizeMB",10);
+                  book=new EBook(title, author, publicationYear, ISBN, fileSize);
+                }
+                
                 try{
                 ReadingItem item = new ReadingItem(book, rating, review, startDate, endDate, status);
                 currentUser.addReadingItem(item);
@@ -965,36 +994,58 @@ public class BookTrackerFrame extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new BookTrackerFrame().setVisible(true));
+        java.awt.EventQueue.invokeLater(new Runnable(){
+            @Override
+            public void run(){
+            new BookTrackerFrame().setVisible(true);
+            }
+        });
     }
     
  private abstract class BookSearchRunnable implements Runnable {
     
         private String urlString = "";
+        private String categoryName;
 
-    public BookSearchRunnable(String urlString){
+    public BookSearchRunnable(String urlString, String categoryName){
         this.urlString=urlString;
+        this.categoryName=categoryName;
     }
 
     @Override
     public void run(){
-        String resultText = "Error loading books."; // Alapértelmezett hibaüzenet
+        var resultText = "Error loading books."; // Alapértelmezett hibaüzenet
         final int MAX_RESULTS_PER_PAGE = 40; 
-        final int TOTAL_PAGES_TO_FETCH = 4; //megprobal 4 oldalt-160 talalalot
+        final int TOTAL_PAGES_TO_FETCH = 3;
             
            try {
-            // A kereso URL tiszta alapjanak kinyerese (maxResults nelkul)
-            String baseUrl = urlString.substring(0, urlString.indexOf("&maxResults")); 
-            
             bookList.clear();
             eBookList.clear();
             audioBookList.clear();
+            
+            // A kereso URL tiszta alapjanak kinyerese (maxResults nelkul)
+            //String baseUrl = urlString.substring(0, urlString.indexOf("&maxResults")); 
+            String baseUrl=urlString;
+                int maxResultsIndex = urlString.indexOf("&maxResults");
+                if (maxResultsIndex != -1) {
+                    baseUrl = urlString.substring(0, maxResultsIndex); 
+                }
             
             boolean foundAnyBook = false; // ellenorzes hogy talalt-e konyvet vagy sem
             
             //Lapozasi Ciklus (Pagination)
             for (int i = 0; i < TOTAL_PAGES_TO_FETCH; i++) {
                 int startIndex = i * MAX_RESULTS_PER_PAGE;
+                
+                if(i>0){
+                    try{
+                        Thread.sleep(1200);
+                    }
+                    catch(InterruptedException e){
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
+                }
                 
                
                 String paginatedUrl = baseUrl + "&maxResults=" + MAX_RESULTS_PER_PAGE + "&startIndex=" + startIndex;
@@ -1062,19 +1113,18 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                     }
      
                     MediaItem mediaItem;
+                    //az audiobook azonositasa printType alapjan
+                    //String printType=volumeInfo.optString("printType","BOOK");
+                    //boolean isApiAudioBook=printType.equals("AUDIOBOOK");
+                    boolean isAudioBookSearch=urlString.contains("+audiobook");
                     
-                    if (urlString.contains("audiobook+OR+listen")) {
-                        int durationMin = Math.max(10, title.length() * 2);
-                        mediaItem = new AudioBook(title, author, publicationYear, ISBN, durationMin);
-                        if(!audioBookList.contains(mediaItem)){
-                            audioBookList.add(mediaItem);
-                        }
-                    } else if (page > 0) {
+                    if (page > 0) {
                         mediaItem = new Book(title, author, publicationYear, ISBN, page);
                         if(!bookList.contains(mediaItem)){
                             bookList.add(mediaItem);
                         }
-                    } else {
+                    }
+                    else {
                         // Alapértelmezett Ebook
                         int defaultSizeMB = Math.max(10, title.length() * 5);
                         mediaItem = new EBook(title, author, publicationYear, ISBN, defaultSizeMB);
@@ -1082,6 +1132,13 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                           eBookList.add(mediaItem);
                         }
                     }
+                /* else if (isAudioBookSearch) {
+                        int durationMin = Math.max(10, title.length() * 2);
+                        mediaItem = new AudioBook(title, author, publicationYear, ISBN, durationMin);
+                        if(!audioBookList.contains(mediaItem)){
+                            audioBookList.add(mediaItem);
+                        }
+                    }*/
                 } //feldolgozas vege
             } //lapozasi ciklus vege
          
@@ -1089,11 +1146,11 @@ public class BookTrackerFrame extends javax.swing.JFrame {
             StringBuilder sb = new StringBuilder();
             
             if (!bookList.isEmpty()) {
-                sb.append("BOOKS\n:");
+                sb.append("\n");
             }
               for (MediaItem book : bookList) {
                     Book selectedBook = (Book) book;
-                    sb.append(book.getTitle())
+                    sb.append("Book: ").append(book.getTitle())
                       .append(" by ").append(selectedBook.getAuthor())
                       .append(" (").append(selectedBook.getPublicationYear()).append(")")
                       .append(", ISBN: ").append(selectedBook.getISBN())
@@ -1116,7 +1173,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 }
             }
             
-            if (!audioBookList.isEmpty()) {
+           /* if (!audioBookList.isEmpty()) {
                 if (!bookList.isEmpty() || !eBookList.isEmpty()) { sb.append("\n"); }
                 for (MediaItem book : audioBookList) {
                     AudioBook selectedAudioBook = (AudioBook) book;
@@ -1127,7 +1184,7 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                       .append(", Duration: ").append(selectedAudioBook.getDurationInMinutes()).append(" min")
                       .append("\n");
                 }
-            }
+            }*/
             
             if (!foundAnyBook) {
                 resultText = "No books was found for this category";
@@ -1147,6 +1204,12 @@ public class BookTrackerFrame extends javax.swing.JFrame {
                 @Override
                 public void run() {
                     outputTxt.setText(finalResultText);
+                    
+                    //csak akkor irjuk a cache-be ha nem error, es ha van konyv
+                    if(finalResultText != null && !finalResultText.startsWith("Error") && finalResultText.equals("No books was found for this category")){
+                        apiCache.put(categoryName, finalResultText);
+                    }
+                    
                     if (finalResultText.startsWith("Error") || finalResultText.equals("No books was found for this category")) {
                         JOptionPane.showMessageDialog(BookTrackerFrame.this, finalResultText);
                     }

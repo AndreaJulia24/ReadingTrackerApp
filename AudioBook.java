@@ -24,7 +24,7 @@ public class AudioBook extends MediaItem {
 
     @Override
     public double calculatePrice() {
-       return (double) this.durationInMinutes * 0.1; //arszamitas: 1 perc= 0.1 egyseg ar
+       return (double) this.durationInMinutes * 1; //arszamitas: 1 perc= 1 egyseg ar
     }
 
     @Override
