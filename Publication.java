@@ -10,7 +10,7 @@ package com.mycompany.booktrackerapp;
  */
 public interface Publication {
     
-    String getSummaryInfo();
+    public String getSummaryInfo();
     
-    double calculatePrice(); //polimorfikus arszamitas
+    public double calculatePrice(); //polimorfikus arszamitas
 }

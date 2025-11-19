@@ -11,12 +11,12 @@ package com.mycompany.booktrackerapp;
 import java.time.LocalDate;
 
 public class ReadingItem {
-    MediaItem book;
-    int rating;
-    String review;
-    LocalDate startDate;
-    LocalDate endDate;
-    Status status;
+    private MediaItem book;
+    private int rating;
+    private String review;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private Status status;
     
     public enum Status{
         READ,
